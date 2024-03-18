@@ -64,18 +64,28 @@ def tuple_sub(a, b):
         in zip(a, b)
     )
 
-def multiply_three(number: int) -> bool:
-    return number%3 == 0
-
 def street_verify(arr):
     arr.sort()
     len_verify = len(arr) == 3
-    multiply_three_verify = multiply_three(max(arr))
-    number_col_verify = (arr[-2] == arr[-1] - 1) and (arr[-3] == arr[-1] -2)
+    multiply_three_verify = max(arr) % 3 == 0
+    number_col_verify = (arr[-2] == arr[-1]-1) and (arr[-3] == arr[-1]-2)
     result = len_verify and multiply_three_verify and number_col_verify
     if not (result):
         raise InvalidBet
     return arr
+
+def check_corner_condition(modOne, modTwo):
+    conditions = {
+        0: 2,
+        1: 2,
+        2: True
+    }
+    if conditions.get(modOne) is True:
+        return True
+    return conditions.get(modOne) == modTwo
+
+def check_difference(max_value, min_value, diff_num):
+    return max_value - min_value == diff_num
 
 
 class InvalidBet(Exception):
@@ -152,20 +162,64 @@ class Bet:
             value,
             street_verify(street)
         )
+    
+    @classmethod
+    def create_two_street(cls, value, lst):
+        lst.sort()
+        max_value, min_value =  max(lst), \
+                                min(lst)
+        modules_max_min_values = max_value % 3 == 0 and \
+                                 min_value % 3 == 1
+        lst_equal_two_street = lst == [i for i in range(min_value, max_value+1)]
+        if lst_equal_two_street and modules_max_min_values and len(lst) == 6:
+            return cls(
+                value,
+                lst
+            )
+        raise InvalidBet
 
     @classmethod 
     def create_line(cls, value, result_mod):
         return cls.create_from_filter(value, lambda it: it % 3 == result_mod)
 
     @classmethod
-    def create_corner(cls, value, float, range):
-        ...
-
-    @classmethod
-    def create_two_street(cls, value, float, range):
-        ...
+    def create_corner(cls, value, lst):
+        max_value, min_value = max(lst), min(lst)
+        lst = sorted(list(set(lst)))
+        copy_lst = list(map(lambda it: it%3, lst))
+        if len(copy_lst) != 4:
+            raise InvalidBet
+        copy_lst.sort()
+        num_one_two_same_line, num_three_four_same_line =  (copy_lst[0] == copy_lst[1],
+                                                            copy_lst[2] == copy_lst[3])
+        same_line = num_one_two_same_line and \
+                    num_three_four_same_line
+        max_minus_min = check_difference(max_value, min_value, 4)
+        verify_line = check_corner_condition(copy_lst[0], copy_lst[2])
+        if same_line and max_minus_min and verify_line:
+            return cls(
+                value, 
+                lst
+            )
+        raise InvalidBet
 
 
 class Roleta:
-    pass
+    
+    def spin_wheel(self):
+        ...
 
+    def get_current_number(self):
+        ...
+
+    def access_history(self):
+        ...
+
+    
+class Player:
+
+    def update_balance(self):
+        ...
+
+    def list_of_bets(self):
+        ...
