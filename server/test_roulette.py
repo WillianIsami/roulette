@@ -1,10 +1,29 @@
 from unittest import TestCase
 from roulette import Bet, BetFactory, InvalidBet, number_to_xy
 from random import sample, choice
+from itertools import chain
 
 
 def gen_bet_numbers(size):
     return sample(range(0, 37), k=size)
+
+def all_two_horizontal():
+    for l in range(3):
+        yield from zip(range(1 + l, 32 + l, 3), range(4 + l, 35 + l, 3))
+
+def all_two_vertical():
+    for c in range(0, 35, 3):
+        yield c + 1, c + 2
+        yield c + 2, c + 3
+
+def all_two():
+    return chain(all_two_horizontal(), all_two_vertical())
+
+def gen_all_four_corners():
+    for i in range(0, 32, 3):
+        yield (i + 1, i + 4, i + 2, i + 5)
+    for i in range(1, 33, 3):
+        yield (i + 1, i + 4, i + 2, i + 5)
 
 
 class MatrizTest(TestCase):
@@ -43,21 +62,16 @@ class BetTest(TestCase):
                 self.assertIsInstance(bet, Bet)
                 self.assertEqual(bet.numbers, expected)
 
-    def test_convert_user_input_multiple_numbers(self):
+    def test_convert_user_input_double_numbers(self):
         dataset = dict(
             (','.join(map(str, numbers)), set(numbers))
-            for numbers in
-            [gen_bet_numbers(choice(range(2, 5))) for _ in range(10)]
+            for numbers in all_two()
         )
         for input, expected in dataset.items():
             with self.subTest(f"Convert {input} to {expected}"):
-                try: 
-                    bet = self.factory.create_from_str(0, input)
-                    self.assertIsInstance(bet, Bet)
-                    self.assertEqual(bet.numbers, expected)
-                except InvalidBet:
-                    with self.assertRaises(InvalidBet):
-                        self.factory.create_from_str(0, input)
+                bet = self.factory.create_from_str(0, input)
+                self.assertIsInstance(bet, Bet)
+                self.assertEqual(bet.numbers, expected)
 
     def test_error_when_not_neighbor(self):
         dataset = (
@@ -73,6 +87,58 @@ class BetTest(TestCase):
                 with self.assertRaises(InvalidBet):
                     self.factory.create_from_str(0, input)
 
+    def test_error_street(self):
+        dataset = (
+            [2,3,4],
+            [1,2,4],
+            [1,1,1],
+            [1,3,3],
+            [9,10,11],
+            [1,1,2,3],
+            [16,15,14],
+            [18,19,20],
+            [23,24,21]
+        )
+        for input in dataset:
+            with self.subTest(f"Check error for {input} street bet"):
+                with self.assertRaises(InvalidBet):
+                    bet = Bet.create_street(100., input)
+                    self.assertIsInstance(bet, Bet)
+                    self.assertEqual(bet.numbers, input)
+
+    def test_error_two_street(self):
+        dataset = (
+            [2,3,4,5,6,7],
+            [1,2,4,7,8,9],
+            [1,1,1,6,6,6],
+            [1,3,3,4,5,6],
+            [13,14,15,16,16,18],
+            [19,20,21,22,24,24],
+            [4,5,6,10,11,12],
+            [10,11,12,13,14,15,16,17,18],
+            [25,26,27,28,29,33]
+        )
+        for input in dataset:
+            with self.subTest(f"Check error for {input} two street bet"):
+                with self.assertRaises(InvalidBet):
+                    bet = Bet.create_two_street(100., input)
+                    self.assertIsInstance(bet, Bet)
+                    self.assertEqual(bet.numbers, input)
+
+    def test_error_when_not_corner_bet(self):
+        dataset = (
+            [1,2,7,8],
+            [10,11,4,5],
+            [13,18,20,23],
+            [14,29,30,13],
+            [2,3,8,9],
+            [9,10,12,13],
+            [2,6,2,6]
+        )
+        for input in dataset:
+            with self.subTest(f"Check error for {input} corner bet"):
+                with self.assertRaises(InvalidBet):
+                    Bet.create_corner(100., input)
 
 class RoletaTest(TestCase):
 
@@ -149,25 +215,6 @@ class RoletaTest(TestCase):
                 self.assertIsInstance(bet, Bet)
                 self.assertEqual(bet.numbers, list(map(lambda it: input*3+it, [-2,-1,0])))
 
-    def test_error_street(self):
-        dataset = (
-            [2,3,4],
-            [1,2,4],
-            [1,1,1],
-            [1,3,3],
-            [9,10,11],
-            [1,1,2,3],
-            [16,15,14],
-            [18,19,20],
-            [23,24,21]
-        )
-        for input in dataset:
-            with self.subTest(f"Check error for {input} street bet"):
-                with self.assertRaises(InvalidBet):
-                    bet = Bet.create_street(100., input)
-                    self.assertIsInstance(bet, Bet)
-                    self.assertEqual(bet.numbers, input)
-
     def test_two_street(self):
         for input in range(1,7):
             with self.subTest(f"Check error for {list(map(lambda it: input*3+it, [-2,-1,0,1,2,3]))} two street bet"):
@@ -175,51 +222,8 @@ class RoletaTest(TestCase):
                 self.assertIsInstance(bet, Bet)
                 self.assertEqual(bet.numbers, list(map(lambda it: input*3+it, [-2,-1,0,1,2,3])))
 
-    def test_error_two_street(self):
-        dataset = (
-            [2,3,4,5,6,7],
-            [1,2,4,7,8,9],
-            [1,1,1,6,6,6],
-            [1,3,3,4,5,6],
-            [13,14,15,16,16,18],
-            [19,20,21,22,24,24],
-            [4,5,6,10,11,12],
-            [10,11,12,13,14,15,16,17,18],
-            [25,26,27,28,29,33]
-        )
-        for input in dataset:
-            with self.subTest(f"Check error for {input} two street bet"):
-                with self.assertRaises(InvalidBet):
-                    bet = Bet.create_two_street(100., input)
-                    self.assertIsInstance(bet, Bet)
-                    self.assertEqual(bet.numbers, input)
-
-    def test_error_when_not_corner_bet(self):
-        dataset = (
-            [1,2,7,8],
-            [10,11,4,5],
-            [13,18,20,23],
-            [14,29,30,13],
-            [2,3,8,9],
-            [9,10,12,13],
-            [2,6,2,6]
-        )
-        for input in dataset:
-            with self.subTest(f"Check error for {input} corner bet"):
-                with self.assertRaises(InvalidBet):
-                    Bet.create_corner(100., input)
-
     def test_corner_bet(self):
-        dataset = (
-            [1,2,4,5],
-            [10,11,7,8],
-            [19,20,16,17],
-            [27,23,24,26],
-            [32,30,29,33],
-            [7,8,4,5],
-            [13,17,16,14]
-        )
-        for input in dataset:
+        for input in gen_all_four_corners():
             with self.subTest(f"Check error for {input} corner bet"):
                 bet = Bet.create_corner(100., input)
                 self.assertIsInstance(bet, Bet)
