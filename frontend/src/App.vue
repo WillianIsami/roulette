@@ -1,15 +1,18 @@
 <template>
   <img alt="Roulette image" src="./assets/roulette_wheel.jpg">
-  <Roulette msg="Welcome to Our Game"/>
+  <RouletteComponent msg="Welcome to Our Game"/>
+  <ApiData />
 </template>
 
 <script>
-import Roulette from './components/Welcome.vue'
+import RouletteComponent from './components/Welcome.vue';
+import ApiData from './components/Api.vue';
 
 export default {
   name: 'App',
   components: {
-    Roulette
+    RouletteComponent,
+    ApiData,
   }
 }
 </script>
