@@ -1,5 +1,5 @@
 <template>
-  <img alt="Roulette image" src="./assets/roulette_wheel.jpg">
+  <img class="w-25" alt="Roulette image" src="./assets/roulette_wheel.jpg">
   <RouletteComponent msg="Welcome to Our Game"/>
   <ApiData />
 </template>
@@ -27,7 +27,4 @@ export default {
   margin-top: 60px;
 }
 
-img {
-  width: 400px;
-}
 </style>./components/Welcome.vue

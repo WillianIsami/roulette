@@ -1,18 +1,6 @@
-export const getToken = () => {
-    const url = 'http://127.0.0.1:8000/bets/api-token-auth/';
-    const data = {
-        username: 'offdout',
-        password: 'ZhinL6L7*'
-    };
+const baseUrl = "http://127.0.0.1:8000/bets/"
 
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    };
-
+export const getToken = (url, options) => {
     fetch(url, options)
         .then(response => {
             if (response.ok) {
@@ -31,32 +19,29 @@ export const getToken = () => {
         });
 }
 
-export const fetchData = () => {
-    const url = 'http://127.0.0.1:8000/bets/api';
+export const fetchData = async () => {
+    const url = `${baseUrl}api`;
     
     const token = localStorage.getItem('token');
-    console.log("tokenzing", token);
     if (!token) {
         console.error('No token found in local storage')
     }
 
     const options = {
+        method: 'GET',
         headers: {
             'Authorization': `Token ${token}`,
         }
     }
 
-    fetch(url, options)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('datas flag', data);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+    try {
+        const response = await fetch(url, options)
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('There was a problem with the fetch operation:', error);
     }
+}
