@@ -131,6 +131,10 @@ class Bet:
     @classmethod
     def create_even(cls, value: float):
         return cls.create_from_filter(value, lambda it: it % 2 == 0)
+    
+    @classmethod 
+    def create_line(cls, value: float, result_mod):
+        return cls.create_from_filter(value, lambda it: it % 3 == result_mod)
 
     @classmethod
     def create_from_range(cls, value: float, range):
@@ -177,10 +181,6 @@ class Bet:
                 lst
             )
         raise InvalidBet
-
-    @classmethod 
-    def create_line(cls, value, result_mod):
-        return cls.create_from_filter(value, lambda it: it % 3 == result_mod)
 
     @classmethod
     def create_corner(cls, value, lst):

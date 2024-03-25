@@ -1,5 +1,5 @@
 from unittest import TestCase
-from roulette import Bet, BetFactory, InvalidBet, number_to_xy
+from roulette_api.roulette import Bet, BetFactory, InvalidBet, number_to_xy
 from random import sample, choice
 from itertools import chain
 
@@ -182,6 +182,16 @@ class RoletaTest(TestCase):
         self.assertEqual(len(bet.numbers), 18)
         self.assertEqual(
             len(list(filter(lambda it: it % 2 == 1, bet.numbers))), 0)
+
+    def test_line(self):
+        result_mod = choice([0,1,2])
+        start_with = 3 if result_mod == 0 else result_mod
+        bet = Bet.create_line(value=100., result_mod=result_mod)
+        self.assertIsInstance(bet, Bet)
+        self.assertEqual(bet.value, 100.)
+        self.assertEqual(len(bet.numbers), 12)
+        self.assertEqual(
+            sorted(list(filter(lambda it: it % 3 == result_mod, bet.numbers))), [i for i in range(start_with,37,3)])
 
     def test_low(self):
         bet = Bet.create_low(value=100.)

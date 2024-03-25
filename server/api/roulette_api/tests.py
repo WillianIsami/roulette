@@ -1,3 +1,5 @@
 from django.test import TestCase
 
-# Create your tests here.
+class Testing(TestCase):
+    def testing(self):
+        self.assertEqual(200, 200)
