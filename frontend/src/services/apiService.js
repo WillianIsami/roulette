@@ -23,8 +23,9 @@ export const fetchData = async () => {
     const url = `${baseUrl}api`;
     
     const token = localStorage.getItem('token');
-    if (!token) {
-        console.error('No token found in local storage')
+    if (token === "undefined") {
+        console.error('You are not logged in')
+        return;
     }
 
     const options = {
