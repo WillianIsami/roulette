@@ -1,5 +1,5 @@
 <template>
-  <div class="roulette">
+  <div class="container">
     <h1>{{ msg }}</h1>
     <p>
       For a guide and recipes on how to play<br>
