@@ -1,6 +1,6 @@
 <template>
     <div>
-        <img src="../assets/imgs/roulette.png" class="w-75" />
+        <h1>How to Play?</h1>
     </div>
 </template>
 

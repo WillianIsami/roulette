@@ -1,5 +1,4 @@
 <template>
-    <HeaderComponent />
     <form @submit.prevent="submitForm" class="w-50 mx-auto">
         <div class="mb-3">
             <label class="form-label">Username</label>
@@ -11,21 +10,15 @@
         </div>
         <button type="submit" class="btn btn-primary" @click="getPermission">Submit</button>
     </form>
-    <FooterComponent />
+    <p class="m-3">Don't have an account? <RouterLink class="fw-bold" to="/register">Sign up</RouterLink></p>
 </template>
 
 
 <script>
-    import { getToken } from '@/services/apiService';
-    import HeaderComponent from '../components/Header.vue';
-    import FooterComponent from '../components/Footer.vue'
+    import { login } from '@/services/apiService';
 
     export default {
-        name: 'App',
-        components: {
-            HeaderComponent,
-            FooterComponent,
-        }, 
+        name: 'LoginView',
 
         data() {
             return {
@@ -48,7 +41,7 @@
                     },
                     body: JSON.stringify(this.formData)
                 };
-                getToken(url, options);
+                login(url, options);
                 this.formData.username = '';
                 this.formData.password = '';
             },

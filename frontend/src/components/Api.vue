@@ -1,11 +1,14 @@
 <template>
     <div>
         <button class="m-4 btn btn-secondary" @click="getData">Show bets</button>
-        <div v-if="responseData">
+        <div v-if="responseData == 1">
             <p class="fw-bold">Bets avaliable:</p>
             <ul class="list-unstyled">
                 <li v-for="(item, index) in responseData" :key="index">{{ index }} - {{ item.bet }}</li>
             </ul>
+        </div>
+        <div v-else-if="responseData == 0">
+            <p>Login with your account <RouterLink class="fw-bold" to="/login">here</RouterLink> to see all bets avaliable</p>
         </div>
     </div>
 </template>

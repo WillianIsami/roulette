@@ -1,6 +1,6 @@
 const baseUrl = "http://127.0.0.1:8000/bets/"
 
-export const getToken = (url, options) => {
+export const login = (url, options) => {
     fetch(url, options)
         .then(response => {
             if (response.ok) {
@@ -19,13 +19,27 @@ export const getToken = (url, options) => {
         });
 }
 
+export const register = (url, options) => {
+    fetch(url, options)
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Network response was not ok.');
+            }
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+}
+
 export const fetchData = async () => {
     const url = `${baseUrl}api`;
     
     const token = localStorage.getItem('token');
     if (token === "undefined") {
         console.error('You are not logged in')
-        return;
+        return 0;
     }
 
     const options = {

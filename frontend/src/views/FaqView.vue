@@ -4,10 +4,10 @@
 
 
 <script>
-    import HowToPlay from '../components/HowToPlay.vue'
+    import HowToPlay from '@/components/HowToPlay.vue';
 
     export default {
-        name: 'Faq',
+        name: 'FaqView',
         components: {
             HowToPlay,
         }, 
