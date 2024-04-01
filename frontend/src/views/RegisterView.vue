@@ -30,9 +30,9 @@
                 required
             />
         </div>
-        <button type="submit" class="btn btn-primary" @click="getPermission">Submit</button>
+        <button type="submit" class="btn btn-success" @click="getPermission">Submit</button>
     </form>
-    <p class="m-3">Have an account? <RouterLink class="fw-bold" to="/login">Log in</RouterLink></p>
+    <p class="m-3">Have an account? <RouterLink class="fw-bold link-success" to="/login">Log in</RouterLink></p>
 </template>
 
 
@@ -45,9 +45,9 @@
         data() {
             return {
                 responseData: null,
-                username: '',
-                password: '',
-                confirmPassword: '',
+                username: null,
+                password: null,
+                confirmPassword: null,
                 baseUrl: "http://127.0.0.1:8000/bets/"
             };
         },
@@ -55,7 +55,15 @@
         methods: {
             getPermission() {
                 const url = `${this.baseUrl}api/create/`;
-                if (this.password !== this.confirmPassword) return;
+                // TODO: Create an element (toast?) on the page intead console.error()
+                if (!this.username || !this.password || !this.confirmPassword) {
+                    console.error("Field empty");
+                    return
+                }  
+                else if (this.password !== this.confirmPassword) {
+                    console.error("Passwords don't match");
+                    return 
+                }
                 const options = {
                     method: 'POST',
                     headers: {
@@ -67,9 +75,9 @@
                     })
                 };
                 register(url, options);
-                this.username = '';
-                this.password = '';
-                this.confirmPassword = '';
+                this.username = null;
+                this.password = null;
+                this.confirmPassword = null;
             },
         }   
     }

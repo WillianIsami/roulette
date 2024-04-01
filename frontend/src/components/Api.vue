@@ -8,7 +8,7 @@
             </ul>
         </div>
         <div v-else-if="responseData == 0">
-            <p>Login with your account <RouterLink class="fw-bold" to="/login">here</RouterLink> to see all bets avaliable</p>
+            <p>Login with your account <RouterLink class="fw-bold link-success" to="/login">here</RouterLink> to see all bets avaliable</p>
         </div>
     </div>
 </template>

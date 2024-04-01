@@ -13,11 +13,11 @@
             </div>
             <div class="two_to_one"> 
                 <div class="col nbs border border-white ms-3 d-flex align-items-center justify-content-center" v-for="row in 3" :key="row">
-                    <p class="text-center two_to_one_p">2 to 1</p>
+                    <p class="text-center">2:1</p>
                 </div>
             </div>
             <div class="position-absolute parent">
-                <div class="medium" v-for="(row, index) in 6" :key="index">
+                <div class="medium" v-for="index in 6" :key="index">
                     <div class="
                     nbs-transparent child border border-primary d-flex justify-content-center align-items-center " v-for="col in 25" :key="col">
                     </div>
@@ -27,7 +27,7 @@
         <div class="bets-container">
             <div class="d-flex justify-content-center">
                 <div class="row w-100">
-                    <div class="col m-1 border border-white bet-text" v-for="col in bet_dozens" :key="col">
+                    <div class="col mt-1 border border-white bet-text" v-for="col in bet_dozens" :key="col">
                         <div class="p-3">
                             <p class="text-center m-0">{{ col }}</p>
                         </div>
@@ -36,7 +36,7 @@
             </div>
             <div class="d-flex justify-content-center">
                 <div class="row w-100">
-                    <div class="col m-1 border border-white bet-text" v-for="col in bets" :key="col">
+                    <div class="col border border-white bet-text" v-for="col in bets" :key="col">
                         <div class="p-1">
                             <p class="text-center m-0">{{ col }}</p>
                         </div>
@@ -68,7 +68,7 @@
                     34: "red", 35: "black", 36: "red",
                 },
                 bet_dozens: ["1st 12", "2nd 12", "3rd 12"],
-                bets: ["1 to 18","Even","Red","Black","Odd","19 to 36"]
+                bets: ["1-18","Even","Red","Black","Odd","19-36"]
                 // rouletteWheelNumbers = [ 
                 //     0, 32, 15, 19, 4, 21, 2, 25,
                 //     17, 34, 6, 27, 13, 36, 11,
@@ -102,8 +102,7 @@
         width: 3em;
         height: 5em;
         color: white;
-        border-bottom-left-radius: 100%;
-        border-top-left-radius: 100%;
+        border-radius: 32px 0px 0px 32px;
     }
 
     .bet-text {
@@ -114,7 +113,7 @@
     }
 
     .text-center {
-        font-size: 0.5em;
+        font-size: 0.8em;
     }
     
     .nbs {

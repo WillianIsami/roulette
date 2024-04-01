@@ -2,15 +2,27 @@
     <form @submit.prevent="submitForm" class="w-50 mx-auto">
         <div class="mb-3">
             <label class="form-label">Username</label>
-            <input type="text" class="form-control" v-model="formData.username" required>
+            <input
+                type="text"
+                class="form-control"
+                v-model="formData.username"
+                placeholder="Enter username"
+                required
+            />
         </div>
         <div class="mb-3">
             <label class="form-label">Password</label>
-            <input type="password" class="form-control" v-model="formData.password" required>
+            <input 
+                type="password" 
+                class="form-control" 
+                v-model="formData.password" 
+                placeholder="Enter password"
+                required
+            />
         </div>
-        <button type="submit" class="btn btn-primary" @click="getPermission">Submit</button>
+        <button type="submit" class="btn btn-success" @click="getPermission">Submit</button>
     </form>
-    <p class="m-3">Don't have an account? <RouterLink class="fw-bold" to="/register">Sign up</RouterLink></p>
+    <p class="m-3">Don't have an account? <RouterLink class="fw-bold link-success" to="/register">Sign up</RouterLink></p>
 </template>
 
 
@@ -34,6 +46,11 @@
         methods: {
             getPermission() {
                 const url = `${this.baseUrl}api-auth-token/`;
+                // TODO: Create an element on the page
+                if (!this.username || !this.password) {
+                    console.error("All fields are empty");
+                    return
+                }
                 const options = {
                     method: 'POST',
                     headers: {

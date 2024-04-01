@@ -2,9 +2,7 @@
     <div class="container">
         <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
             <div class="col-md-4 d-flex align-items-center justify-content-center">
-                <a href="/" class="text-muted text-decoration-none lh-1">
-                    <img src="../assets/icons/logo.png" width="40" height="40"/>
-                </a>
+                <img src="../assets/icons/logo.png" width="40" height="40"/>
                 <span class="ms-3 text-muted">© 2024 Company, Inc</span>
             </div>
 

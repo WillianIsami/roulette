@@ -11,6 +11,7 @@ export const login = (url, options) => {
         })
         .then(data => {
             const token = data.token;
+            // TODO: Change where the token is stored
             localStorage.setItem('token', token);
             console.log('Token', token);
         })
@@ -35,7 +36,6 @@ export const register = (url, options) => {
 
 export const fetchData = async () => {
     const url = `${baseUrl}api`;
-    
     const token = localStorage.getItem('token');
     if (token === "undefined") {
         console.error('You are not logged in')
