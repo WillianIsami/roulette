@@ -1,5 +1,18 @@
 const baseUrl = "http://127.0.0.1:8000/bets/"
 
+export const register = async (url, options) => {
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error("Error loading api data");
+        }
+        const data = await response.json();
+        return data.username;
+    } catch (error) {
+        console.error('Error: ', error);
+    }
+}
+
 export const login = (url, options) => {
     fetch(url, options)
         .then(response => {
@@ -20,18 +33,8 @@ export const login = (url, options) => {
         });
 }
 
-export const register = (url, options) => {
-    fetch(url, options)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+export const logout = () => {
+    localStorage.removeItem('currentUser');
 }
 
 export const fetchData = async () => {

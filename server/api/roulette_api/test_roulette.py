@@ -1,4 +1,5 @@
-from unittest import TestCase
+# from unittest import TestCase
+from django.test import TestCase
 from roulette_api.roulette import Bet, BetFactory, InvalidBet, number_to_xy
 from random import sample, choice
 from itertools import chain

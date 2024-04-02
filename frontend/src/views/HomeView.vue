@@ -3,23 +3,20 @@
         <WelcomeComponent msg="Welcome to Our Game"/>
         <RouletteComponent />
         <ApiComponent />
-        <FooterComponent />
     </div>
 </template>
 
 <script>
   import WelcomeComponent from '../components/Welcome.vue';
   import ApiComponent from '../components/Api.vue';
-  import FooterComponent from '../components/Footer.vue';
   import RouletteComponent from '../components/RouletteBorder.vue';
 
   export default {
-    name: 'App',
+    name: 'HomeView',
     components: {
       WelcomeComponent,
       RouletteComponent,
-      ApiComponent,
-      FooterComponent,
+      ApiComponent
     }
   }
 </script>

@@ -5,7 +5,7 @@
                 <p class="fs-1 mb-0 text-center"> 0 </p>
             </div>
             <div>
-                <div class="row" v-for="(row, index) in 3" :key="index">
+                <div class="row" v-for="row in 3" :key="row">
                     <div class="col nbs border border-white d-flex justify-content-center align-items-center" v-for="col in 12" :key="col" :id="`col${col*3-row+1}`" :style="{ backgroundColor: getColor(col * 3 - row + 1) }">
                         {{ col * 3 - row + 1 }}
                     </div>
@@ -17,9 +17,10 @@
                 </div>
             </div>
             <div class="position-absolute parent">
-                <div class="medium" v-for="index in 6" :key="index">
+                <div class="medium" v-for="row in 6" :key="row">
                     <div class="
-                    nbs-transparent child border border-primary d-flex justify-content-center align-items-center " v-for="col in 25" :key="col">
+                    nbs-transparent child border border-primary d-flex justify-content-center align-items-center " v-for="col in 25" :key="col" @click="inList(col*6-row+1)">
+
                     </div>
                 </div>
             </div>
@@ -68,7 +69,8 @@
                     34: "red", 35: "black", 36: "red",
                 },
                 bet_dozens: ["1st 12", "2nd 12", "3rd 12"],
-                bets: ["1-18","Even","Red","Black","Odd","19-36"]
+                bets: ["1-18","Even","Red","Black","Odd","19-36"],
+                shadowNumbers: []
                 // rouletteWheelNumbers = [ 
                 //     0, 32, 15, 19, 4, 21, 2, 25,
                 //     17, 34, 6, 27, 13, 36, 11,
@@ -78,6 +80,11 @@
                 // ];
             };
         },
+
+        mounted() {
+            this.generateOnlyOneNumber();
+        },
+
         methods: {
             getColor(number) {
                 return this.roleta[number]; 
@@ -85,6 +92,24 @@
 
             printNumber(number) {
                 console.log("lol", number);
+            },
+
+            generateOnlyOneNumber() {
+                this.gap =  8;
+                for (let rowNumber = 1; rowNumber <= 150; rowNumber++) {
+                    if (rowNumber === this.gap) {
+                        for (let colNumber = 0; colNumber <= 4; colNumber += 2) this.shadowNumbers.push(rowNumber + colNumber);
+                        this.gap += 12;
+                    }
+                }
+            },
+
+            inList(number) {
+                if (this.shadowNumbers.includes(number)) {
+                    let index = this.shadowNumbers.indexOf(number);
+                    console.log(`${index+1}: ${number}`, );
+                    return;
+                }
             }
         }
     };

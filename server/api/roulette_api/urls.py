@@ -6,5 +6,5 @@ urlpatterns = [
     path("api", BetListApiView.as_view()),
     path("api/<int:bet_id>/", BetDetailApiView.as_view()),
     path('api/create/', UserCreateView.as_view(), name='user-create'),
-    path("api-token-auth/", obtain_auth_token, name='api_token_auth'),
+    path("api-auth-token/", obtain_auth_token, name='api_token_auth'),
 ]

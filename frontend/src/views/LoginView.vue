@@ -7,8 +7,9 @@
                 class="form-control"
                 v-model="formData.username"
                 placeholder="Enter username"
-                required
+                :class="{ 'is-invalid': verification && !formData.username}"
             />
+            <p class="invalid-feedback" v-if="verification && !formData.username">Username required</p>
         </div>
         <div class="mb-3">
             <label class="form-label">Password</label>
@@ -17,8 +18,9 @@
                 class="form-control" 
                 v-model="formData.password" 
                 placeholder="Enter password"
-                required
+                :class="{ 'is-invalid': verification && !formData.password}"
             />
+            <p class="invalid-feedback" v-if="verification &&!formData.password">Password required</p>
         </div>
         <button type="submit" class="btn btn-success" @click="getPermission">Submit</button>
     </form>
@@ -27,6 +29,7 @@
 
 
 <script>
+    import router from '@/router/routes';
     import { login } from '@/services/apiService';
 
     export default {
@@ -34,21 +37,25 @@
 
         data() {
             return {
-                responseData: null,
+                verification: null,
                 formData: {
-                    username: '',
-                    password: ''
+                    username: null,
+                    password: null
                 },
                 baseUrl: "http://127.0.0.1:8000/bets/"
             };
         },
 
         methods: {
+            inputVerification() {
+                this.verification = true;
+                return this.formData.username && this.formData.password;
+            },
+
             getPermission() {
                 const url = `${this.baseUrl}api-auth-token/`;
-                // TODO: Create an element on the page
-                if (!this.username || !this.password) {
-                    console.error("All fields are empty");
+                if (!this.inputVerification()) {
+                    console.error("field required");
                     return
                 }
                 const options = {
@@ -59,8 +66,13 @@
                     body: JSON.stringify(this.formData)
                 };
                 login(url, options);
-                this.formData.username = '';
-                this.formData.password = '';
+                // TODO: Session authentication
+                const isLoggedIn = localStorage.getItem('token') !== null;
+                if (isLoggedIn) {
+                    router.push("/");
+                }
+                this.formData.username = null;
+                this.formData.password = null;
             },
         }   
     }

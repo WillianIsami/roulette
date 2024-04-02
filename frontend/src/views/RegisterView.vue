@@ -7,8 +7,9 @@
                 class="form-control"
                 v-model="username"
                 placeholder="Enter Username"
-                required
+                :class="{ 'is-invalid': verification && !username}"
             />
+            <p class="invalid-feedback" v-if="verification && !username">Username required</p>
         </div>
         <div class="mb-3">
             <label class="form-label">Password</label>
@@ -17,8 +18,9 @@
                 class="form-control"
                 v-model="password"
                 placeholder="Enter password"
-                required
+                :class="{ 'is-invalid': verification && !password}"
             />
+            <p class="invalid-feedback" v-if="verification &&!password">Password required</p>
         </div>
         <div class="mb-3">
             <label class="form-label">Confirm Password</label>
@@ -27,8 +29,9 @@
                 class="form-control"
                 v-model="confirmPassword"
                 placeholder="Confirm Password"
-                required
+                :class="{ 'is-invalid': verification && (password !== confirmPassword || !confirmPassword)}"
             />
+            <p class="invalid-feedback" v-if="verification && (password !== confirmPassword || !confirmPassword)">Passwords don't match</p>
         </div>
         <button type="submit" class="btn btn-success" @click="getPermission">Submit</button>
     </form>
@@ -37,6 +40,7 @@
 
 
 <script>
+    import router from '@/router/routes';
     import { register } from '@/services/apiService';
 
     export default {
@@ -44,25 +48,26 @@
 
         data() {
             return {
-                responseData: null,
+                verification: null,
                 username: null,
                 password: null,
                 confirmPassword: null,
+                createdUser: null,
                 baseUrl: "http://127.0.0.1:8000/bets/"
             };
         },
 
         methods: {
+            inputVerification() {
+                this.verification = true;
+                return this.username && this.password && this.confirmPassword && this.password === this.confirmPassword;
+            },
+            
             getPermission() {
                 const url = `${this.baseUrl}api/create/`;
-                // TODO: Create an element (toast?) on the page intead console.error()
-                if (!this.username || !this.password || !this.confirmPassword) {
-                    console.error("Field empty");
-                    return
-                }  
-                else if (this.password !== this.confirmPassword) {
-                    console.error("Passwords don't match");
-                    return 
+                if (!this.inputVerification()) {
+                    console.error("field required");
+                    return;
                 }
                 const options = {
                     method: 'POST',
@@ -74,10 +79,16 @@
                         password: this.password
                     })
                 };
-                register(url, options);
-                this.username = null;
-                this.password = null;
-                this.confirmPassword = null;
+                register(url, options).then(data => {
+                    // TODO: Session authentication
+                    if (typeof(data) === typeof("str")) {
+                        router.push("/login");
+                        return;
+                    }
+                    this.username = null;
+                    this.password = null;
+                    this.confirmPassword = null;
+                })
             },
         }   
     }
