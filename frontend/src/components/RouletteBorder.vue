@@ -70,19 +70,18 @@
                 },
                 bet_dozens: ["1st 12", "2nd 12", "3rd 12"],
                 bets: ["1-18","Even","Red","Black","Odd","19-36"],
-                shadowNumbers: []
-                // rouletteWheelNumbers = [ 
-                //     0, 32, 15, 19, 4, 21, 2, 25,
-                //     17, 34, 6, 27, 13, 36, 11,
-                //     30, 8, 23,10, 5, 24, 16, 33,
-                //     1, 20, 14, 31, 9, 22, 18, 29,
-                //     7, 28, 12, 35, 3, 26
-                // ];
+                straightUpBetArr: [],
+                splitArr: [],
+                streetArr: [],
+                cornerArr: [],
+                sixLineArr: [],
             };
         },
 
         mounted() {
-            this.generateOnlyOneNumber();
+            this.genArrBet(this.straightUpBetArr , 8, 144, 3);
+            this.genArrBet(this.splitArr, 14, 138, 3);
+            this.genArrBet(this.cornerArr, 15, 137, 2);
         },
 
         methods: {
@@ -90,25 +89,29 @@
                 return this.roleta[number]; 
             },
 
-            printNumber(number) {
-                console.log("lol", number);
-            },
-
-            generateOnlyOneNumber() {
-                this.gap =  8;
-                for (let rowNumber = 1; rowNumber <= 150; rowNumber++) {
-                    if (rowNumber === this.gap) {
-                        for (let colNumber = 0; colNumber <= 4; colNumber += 2) this.shadowNumbers.push(rowNumber + colNumber);
-                        this.gap += 12;
-                    }
+            genArrBet(arr, start, end, leng) {
+                for (let rowNumber = start; rowNumber <= end; rowNumber += 12) {
+                    Array.prototype.push.apply(arr, Array.from({length: leng}, (_, i) => rowNumber + i * 2));
                 }
             },
 
             inList(number) {
-                if (this.shadowNumbers.includes(number)) {
-                    let index = this.shadowNumbers.indexOf(number);
-                    console.log(`${index+1}: ${number}`, );
-                    return;
+                // TODO: call functions and send values instead console.log
+                if (this.straightUpBetArr.includes(number)) {
+                    let straightIndex = this.straightUpBetArr.indexOf(number);
+                    console.log(`${straightIndex+1}: ${number}`);
+                }
+                else if (this.splitArr.includes(number)) {
+                    let splitIndex = this.splitArr.indexOf(number);
+                    this.firstSplit = [1,4];
+                    this.splitResultArr = this.firstSplit.map((value) => value + splitIndex);
+                    console.log(`${number}: ${this.splitResultArr}`);
+                }
+                else if (this.cornerArr.includes(number)) {
+                    let cornerIndex = this.cornerArr.indexOf(number);
+                    this.firstCorner = [1,2,4,5];
+                    this.cornerResultArr = this.firstCorner.map((value) => value + cornerIndex + Math.floor(cornerIndex/2));
+                    console.log(`${number}: ${this.cornerResultArr}`);
                 }
             }
         }
