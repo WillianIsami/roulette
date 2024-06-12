@@ -35,9 +35,9 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_DB: mydatabase
-          POSTGRES_USER: myuser
-          POSTGRES_PASSWORD: mypassword
+          POSTGRES_DB: db_name
+          POSTGRES_USER: db_user
+          POSTGRES_PASSWORD: db_password
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -54,7 +54,7 @@ jobs:
         pip install -r requirements.txt
     - name: Run tests
       env:
-        DATABASE_URL: postgres://myuser:mypassword@localhost:5432/mydatabase
+        DATABASE_URL: postgres://db_user:db_password@localhost:5432/db_name
       run: |
         cd server/api
         cp .env.example .env
