@@ -21,12 +21,13 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: './frontend/package-lock.json'
-    - name: Install frontend dependencies
-      run: npm install
-    - name: Build frotend
-      run: npm run build
-    - name: Lint frontend code
-      run: npm run lint
+    - name: Install lintfrontend dependencies, build and run lint
+      run: |
+        cd frontend
+        cp .env.example .env
+        npm install
+        npm run build
+        npm run lint
 
   server:
     runs-on: ubuntu-latest
@@ -43,4 +44,5 @@ jobs:
     - name: Test with django
       run: |
         cd server/api
+        cp .env.example .env
         python ./manage.py test
