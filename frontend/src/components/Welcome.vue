@@ -1,36 +1,23 @@
 <template>
-  <div class="container">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to play<br>
-      check out the
-      <a href="#">rules</a>.
-    </p>
+  <div class="m-4 text-success">
+    <h1>ROULETTE</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'RouletteComponent',
-  props: {
-    msg: String
-  }
-}
+  name: "RouletteComponent",
+};
 </script>
 
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+
+h1 {
+  font-family: Inter;
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
 }
 </style>

@@ -1,11 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Bet
-
-class BetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bet
-        fields = ["bet", "timestamp", "completed", "updated", "user"]
+from .models import Wallet, Transaction
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,3 +11,13 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
+
+class WalletSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = ['id', 'user', 'balance']
+
+class TransactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transaction
+        fields = ['id', 'wallet', 'amount', 'timestamp']

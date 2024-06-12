@@ -2,13 +2,40 @@ version: '3.8'
 
 services:
   frontend:
+    container_name: frontend.rlt
     build:
-      context: ./server
+      context: ./frontend
     ports:
-      - "8000:8000"
+      - "${CLIENT_PORT}:${CLIENT_PORT}"
+    env_file:
+      - ./frontend/.env
+    volumes:
+      - ./:/frontend
 
   backend:
+    container_name: server.rlt
     build:
       context: ./server
     ports:
-      - "8080:8080"
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    env_file:
+      - ./server/api/.env
+    volumes:
+      - ./:/server
+    depends_on:
+      - db
+    
+  db:
+    image: postgres:latest
+    container_name: db.rlt
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+      - POSTGRES_USER= ${DB_USERNAME}
+      - POSTGRES_PASSWORD= ${DB_PASSWORD}
+      - POSTGRES_DB= ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

@@ -1,12 +1,7 @@
-# from unittest import TestCase
 from django.test import TestCase
 from roulette_api.roulette import Bet, BetFactory, InvalidBet, number_to_xy
 from random import sample, choice
 from itertools import chain
-
-
-def gen_bet_numbers(size):
-    return sample(range(0, 37), k=size)
 
 def all_two_horizontal():
     for l in range(3):
@@ -105,7 +100,7 @@ class BetTest(TestCase):
                 with self.assertRaises(InvalidBet):
                     bet = Bet.create_street(100., input)
                     self.assertIsInstance(bet, Bet)
-                    self.assertEqual(bet.numbers, input)
+                    self.assertEqual(bet.numbers, set(input))
 
     def test_error_two_street(self):
         dataset = (
@@ -124,7 +119,7 @@ class BetTest(TestCase):
                 with self.assertRaises(InvalidBet):
                     bet = Bet.create_two_street(100., input)
                     self.assertIsInstance(bet, Bet)
-                    self.assertEqual(bet.numbers, input)
+                    self.assertEqual(bet.numbers, set(input))
 
     def test_error_when_not_corner_bet(self):
         dataset = (
@@ -134,7 +129,8 @@ class BetTest(TestCase):
             [14,29,30,13],
             [2,3,8,9],
             [9,10,12,13],
-            [2,6,2,6]
+            [2,6,2,6],
+            [3,6,4,7],
         )
         for input in dataset:
             with self.subTest(f"Check error for {input} corner bet"):
@@ -184,15 +180,26 @@ class RoletaTest(TestCase):
         self.assertEqual(
             len(list(filter(lambda it: it % 2 == 1, bet.numbers))), 0)
 
-    def test_line(self):
-        result_mod = choice([0,1,2])
-        start_with = 3 if result_mod == 0 else result_mod
-        bet = Bet.create_line(value=100., result_mod=result_mod)
+    def test_line_one(self):
+        bet = Bet.create_line_one(value=100.)
         self.assertIsInstance(bet, Bet)
         self.assertEqual(bet.value, 100.)
         self.assertEqual(len(bet.numbers), 12)
-        self.assertEqual(
-            sorted(list(filter(lambda it: it % 3 == result_mod, bet.numbers))), [i for i in range(start_with,37,3)])
+        self.assertEqual(bet.numbers, set(i for i in range(3,37,3)))
+    
+    def test_line_two(self):
+        bet = Bet.create_line_two(value=100.)
+        self.assertIsInstance(bet, Bet)
+        self.assertEqual(bet.value, 100.)
+        self.assertEqual(len(bet.numbers), 12)
+        self.assertEqual(bet.numbers, set(i for i in range(2,37,3)))
+
+    def test_line_three(self):
+        bet = Bet.create_line_three(value=100.)
+        self.assertIsInstance(bet, Bet)
+        self.assertEqual(bet.value, 100.)
+        self.assertEqual(len(bet.numbers), 12)
+        self.assertEqual(bet.numbers, set(i for i in range(1,37,3)))
 
     def test_low(self):
         bet = Bet.create_low(value=100.)
@@ -224,18 +231,18 @@ class RoletaTest(TestCase):
             with self.subTest(f"Check error for {list(map(lambda it: input*3+it,[-2,-1,0]))} street bet"):
                 bet = Bet.create_street(100., list(map(lambda it: input*3+it, [-2,-1,0])))
                 self.assertIsInstance(bet, Bet)
-                self.assertEqual(bet.numbers, list(map(lambda it: input*3+it, [-2,-1,0])))
+                self.assertEqual(bet.numbers, set(map(lambda it: input*3+it, [-2,-1,0])))
 
     def test_two_street(self):
         for input in range(1,7):
             with self.subTest(f"Check error for {list(map(lambda it: input*3+it, [-2,-1,0,1,2,3]))} two street bet"):
                 bet = Bet.create_two_street(100., list(map(lambda it: input*3+it, [-2,-1,0,1,2,3])))
                 self.assertIsInstance(bet, Bet)
-                self.assertEqual(bet.numbers, list(map(lambda it: input*3+it, [-2,-1,0,1,2,3])))
+                self.assertEqual(bet.numbers, set(map(lambda it: input*3+it, [-2,-1,0,1,2,3])))
 
     def test_corner_bet(self):
         for input in gen_all_four_corners():
             with self.subTest(f"Check error for {input} corner bet"):
                 bet = Bet.create_corner(100., input)
                 self.assertIsInstance(bet, Bet)
-                self.assertEqual(bet.numbers, sorted(input))
+                self.assertEqual(bet.numbers, set(input))

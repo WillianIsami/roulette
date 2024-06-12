@@ -1,15 +1,14 @@
 FROM python:3.10
 
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /server
-
-COPY api/requirements.txt .
-
-RUN pip install -r requirements.txt
+WORKDIR /opt/server
 
 COPY . .
 
-EXPOSE 8000
+RUN pip install -r api/requirements.txt
 
-CMD ["python3", "api/manage.py", "runserver", "0.0.0.0:8000"]
+RUN chmod +x /opt/server/entrypoint.sh
+ENTRYPOINT ["/opt/server/entrypoint.sh"]
+
+EXPOSE 8080
+
+CMD ["python3", "api/manage.py", "runserver"]

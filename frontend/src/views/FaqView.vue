@@ -1,15 +1,14 @@
 <template>
-    <HowToPlay />
+  <HowToPlay />
 </template>
 
-
 <script>
-    import HowToPlay from '@/components/HowToPlay.vue';
+import HowToPlay from "@/components/HowToPlay.vue";
 
-    export default {
-        name: 'FaqView',
-        components: {
-            HowToPlay,
-        }, 
-    }
+export default {
+  name: "FaqView",
+  components: {
+    HowToPlay,
+  },
+};
 </script>

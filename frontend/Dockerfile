@@ -1,13 +1,15 @@
-FROM node:lts-alpine
+FROM node:18.19.0
 
-WORKDIR /app
+RUN npm i npm@latest -g
 
-COPY package*.json ./
-
-RUN npm install
+WORKDIR /opt/app
 
 COPY . .
 
+RUN npm install
+
 RUN npm run build
-EXPOSE 8080
+
+EXPOSE 8000
+
 CMD [ "npm", "run", "serve" ]

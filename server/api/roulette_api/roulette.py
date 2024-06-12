@@ -1,47 +1,7 @@
 from typing import Sequence
-from functools import reduce
-from operator import add
 from dataclasses import dataclass
 
-DEFAULT_NUMBERS = (
-    0,
-    32,
-    15,
-    19,
-    4,
-    21,
-    2,
-    25,
-    17,
-    34,
-    6,
-    27,
-    13,
-    36,
-    11,
-    30,
-    8,
-    23,
-    10,
-    5,
-    24,
-    16,
-    33,
-    1,
-    20,
-    14,
-    31,
-    9,
-    22,
-    18,
-    29,
-    7,
-    28,
-    12,
-    35,
-    3,
-    26,
-)
+DEFAULT_NUMBERS = ( 0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26)
 
 DEFAULT_RED_NUMBERS = tuple(DEFAULT_NUMBERS[1::2])
 DEFAULT_BLACK_NUMBERS = tuple(DEFAULT_NUMBERS[2::2])
@@ -133,8 +93,16 @@ class Bet:
         return cls.create_from_filter(value, lambda it: it % 2 == 0)
     
     @classmethod 
-    def create_line(cls, value: float, result_mod):
-        return cls.create_from_filter(value, lambda it: it % 3 == result_mod)
+    def create_line_one(cls, value: float):
+        return cls.create_from_filter(value, lambda it: it % 3 == 0)
+
+    @classmethod 
+    def create_line_two(cls, value: float):
+        return cls.create_from_filter(value, lambda it: it % 3 == 2)
+    
+    @classmethod 
+    def create_line_three(cls, value: float):
+        return cls.create_from_filter(value, lambda it: it % 3 == 1)
 
     @classmethod
     def create_from_range(cls, value: float, range):
@@ -161,10 +129,11 @@ class Bet:
         return cls.create_from_range(value, range(25,37))
 
     @classmethod
-    def create_street(cls, value, street):
+    def create_street(cls, value, lst):
+        street_verify(lst)
         return cls(
             value,
-            street_verify(street)
+            set(lst)
         )
     
     @classmethod
@@ -178,7 +147,7 @@ class Bet:
         if lst_equal_two_street and modules_max_min_values and len(lst) == 6:
             return cls(
                 value,
-                lst
+                set(lst)
             )
         raise InvalidBet
 
@@ -199,27 +168,16 @@ class Bet:
         if same_line and max_minus_min and verify_line:
             return cls(
                 value, 
-                lst
+                set(lst)
             )
         raise InvalidBet
-
-
-class Roleta:
     
-    def spin_wheel(self):
-        ...
-
-    def get_current_number(self):
-        ...
-
-    def access_history(self):
-        ...
-
-    
-class Player:
-
-    def update_balance(self):
-        ...
-
-    def list_of_bets(self):
-        ...
+    @classmethod
+    def create_zero_bets(cls, value, lst):
+        bet_numbers = [[0, 1, 2, 3],[0, 1],[0, 1, 2],[0, 2],[0, 2, 3],[0, 3]]
+        if lst in bet_numbers:
+            return cls(
+                value,
+                set(lst)
+            )
+        return InvalidBet

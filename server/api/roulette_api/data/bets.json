@@ -1,0 +1,19 @@
+{
+  "bets": [
+    "straight-up",
+    "split",
+    "street",
+    "two street",
+    "corner",
+    "line",
+    "1st 12",
+    "2nd 12",
+    "3rd 12",
+    "1-18",
+    "even",
+    "red",
+    "black",
+    "odd",
+    "19-36"
+  ]
+}

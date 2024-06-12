@@ -1,65 +1,26 @@
-const baseUrl = "http://127.0.0.1:8000/bets/"
-
 export const register = async (url, options) => {
-    try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-            throw new Error("Error loading api data");
-        }
-        const data = await response.json();
-        return data.username;
-    } catch (error) {
-        console.error('Error: ', error);
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error("Error loading api data");
     }
-}
+    const data = await response.json();
+    return data.username;
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+};
 
-export const login = (url, options) => {
-    fetch(url, options)
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Network response was not ok.');
-            }
-        })
-        .then(data => {
-            const token = data.token;
-            // TODO: Change where the token is stored
-            localStorage.setItem('token', token);
-            console.log('Token', token);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
-}
-
-export const logout = () => {
-    localStorage.removeItem('currentUser');
-}
-
-export const fetchData = async () => {
-    const url = `${baseUrl}api`;
-    const token = localStorage.getItem('token');
-    if (token === "undefined") {
-        console.error('You are not logged in')
-        return 0;
+export const sendBets = async (url, options) => {
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'Authorization': `Token ${token}`,
-        }
-    }
-
-    try {
-        const response = await fetch(url, options)
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('There was a problem with the fetch operation:', error);
-    }
+    const data = await response.json()
+    console.log("Bets sent successfully: ", data)
+    return data
+  } catch (error) {
+    console.error("Error sending bets: ", error);
+  }
 }

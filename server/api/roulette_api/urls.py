@@ -1,10 +1,12 @@
 from django.urls import path
-from rest_framework.authtoken.views import obtain_auth_token
-from .views import BetListApiView, BetDetailApiView, UserCreateView
+from .views import BetApiView, UserCreateView, SpinRouletteView, LogoutView, IsAuthenticatedView,CookieTokenObtainPairView, CookieTokenRefreshView
 
 urlpatterns = [
-    path("api", BetListApiView.as_view()),
-    path("api/<int:bet_id>/", BetDetailApiView.as_view()),
-    path('api/create/', UserCreateView.as_view(), name='user-create'),
-    path("api-auth-token/", obtain_auth_token, name='api_token_auth'),
+    path('api/', BetApiView.as_view(), name='bet_api'),
+    path('api/create/', UserCreateView.as_view(), name='user_create'),
+    path('api/logout/', LogoutView.as_view(), name='logout'),
+    path('api/is-authenticated/', IsAuthenticatedView.as_view(), name='is_authenticated'),
+    path('api/token/', CookieTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
+    path('api/spin/', SpinRouletteView.as_view(), name='spin_roulette'),
 ]
