@@ -11,4 +11,4 @@ ENTRYPOINT ["/opt/server/entrypoint.sh"]
 
 EXPOSE 8080
 
-CMD ["python3", "api/manage.py", "runserver"]
+CMD ["python3", "api/manage.py", "runserver", "0.0.0.0:8080"]

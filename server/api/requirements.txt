@@ -16,5 +16,6 @@ python-decouple==3.8
 pytz==2024.1
 PyYAML==6.0.1
 sqlparse==0.4.4
+setuptools>=69.0.0,<81
 typing_extensions==4.10.0
 uritemplate==4.1.1

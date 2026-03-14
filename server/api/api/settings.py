@@ -12,9 +12,23 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import environ
 import os
+import sys
 from datetime import timedelta
 from decouple import config
 from pathlib import Path
+
+
+def parse_bool(value, default):
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return default
+    normalized = str(value).strip().lower()
+    if normalized in {'1', 'true', 'yes', 'on'}:
+        return True
+    if normalized in {'0', 'false', 'no', 'off'}:
+        return False
+    return default
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +43,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = env('SERVER_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True, cast=bool)
+DEBUG = parse_bool(os.getenv('DEBUG', None), True)
 
 SESSION_COOKIE_HTTPONLY = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -38,9 +52,6 @@ USE_X_FORWARDED_PORT = True
 
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
-CSRF_TRUSTED_ORIGINS = [
-    env('CORS_URL')
-]
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
@@ -50,7 +61,7 @@ ALLOWED_HOSTS = config(
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
-    default='',
+    default=env('CORS_URL', default='http://localhost:8000'),
     cast=lambda it: list(filter(None, it.split(','))),
 )
 
@@ -80,12 +91,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    env('CORS_URL'),
-]
-
 CORS_ALLOWED_ORIGINS = [
-    env('CORS_URL'),
+    env('CORS_URL', default='http://localhost:8000'),
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -114,16 +121,26 @@ WSGI_APPLICATION = 'api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('DB_NAME'), 
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'), 
-        'PORT': env('DB_PORT'),
+use_sqlite = parse_bool(os.getenv('USE_SQLITE', None), False) or 'test' in sys.argv
+
+if use_sqlite:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+        }
+    }
 
 
 # Password validation
