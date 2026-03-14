@@ -1,10 +1,8 @@
 <template>
   <section class="glass-card p-4 mb-3">
     <div class="guide-header mb-3">
-      <h2 class="section-title mb-1">Guia visual de apostas</h2>
-      <p class="mb-0 text-muted">
-        Clique em um tipo de aposta para ver, no mini-board, quais números ela cobre e onde normalmente você clica na mesa.
-      </p>
+      <h2 class="section-title mb-1">{{ $t("betGuide.title") }}</h2>
+      <p class="mb-0 text-muted">{{ $t("betGuide.lead") }}</p>
     </div>
 
     <div class="type-grid mb-3">
@@ -16,19 +14,22 @@
         :class="{ active: selectedBetId === item.id }"
         @click="selectedBetId = item.id"
       >
-        <span>{{ item.label }}</span>
+        <span>{{ betTypeLabel(item.id) }}</span>
       </button>
     </div>
 
     <div class="guide-layout">
       <div class="guide-summary">
-        <p class="pill-label mb-2">{{ selectedExample.category }}</p>
-        <h3 class="mb-2">{{ selectedExample.label }}</h3>
-        <p class="mb-2">{{ selectedExample.hint }}</p>
-        <p class="mb-2"><strong>Cobertura:</strong> {{ selectedExample.numbers.length }} números</p>
-        <p class="mb-2"><strong>Retorno líquido ao acertar:</strong> {{ selectedExample.payout }}</p>
-        <p class="mb-2"><strong>Exemplo com ficha {{ stakeExample.toFixed(2) }}:</strong> +{{ hitProfit.toFixed(2) }}</p>
-        <p class="mb-0 text-muted">Se errar, o resultado líquido dessa aposta é -{{ stakeExample.toFixed(2) }}.</p>
+        <p class="pill-label mb-2">{{ $t(selectedExample.categoryKey) }}</p>
+        <h3 class="mb-2">{{ betTypeLabel(selectedExample.id) }}</h3>
+        <p class="mb-2">{{ $t(selectedExample.hintKey) }}</p>
+        <p class="mb-2"><strong>{{ $t("betGuide.coverage") }}:</strong> {{ selectedExample.numbers.length }}</p>
+        <p class="mb-2"><strong>{{ $t("betGuide.payout") }}:</strong> {{ selectedExample.payout }}</p>
+        <p class="mb-2">
+          <strong>{{ $t("betGuide.stakeExample", { stake: stakeExample.toFixed(2) }) }}:</strong>
+          +{{ hitProfit.toFixed(2) }}
+        </p>
+        <p class="mb-0 text-muted">{{ $t("betGuide.lossExample", { stake: stakeExample.toFixed(2) }) }}</p>
       </div>
 
       <div class="guide-board-wrap">
@@ -77,7 +78,7 @@
                 class="outside-cell"
                 :class="{ active: selectedExample.outsideCell === label }"
               >
-                {{ label }}
+                {{ betTypeLabel(label) }}
               </div>
             </div>
             <div class="outside-row six">
@@ -87,7 +88,7 @@
                 class="outside-cell"
                 :class="{ active: selectedExample.outsideCell === label }"
               >
-                {{ label }}
+                {{ betTypeLabel(label) }}
               </div>
             </div>
           </div>
@@ -98,6 +99,8 @@
 </template>
 
 <script>
+import { translateBetType } from "@/utils/betType";
+
 export default {
   name: "BetGuideInteractive",
   data() {
@@ -105,7 +108,7 @@ export default {
       stakeExample: 5,
       selectedBetId: "straight-up",
       outsideDozens: ["1st 12", "2nd 12", "3rd 12"],
-      outsideSimple: ["1-18", "Even", "Red", "Black", "Odd", "19-36"],
+      outsideSimple: ["1-18", "even", "red", "black", "odd", "19-36"],
       roulette: {
         1: "red",
         2: "black",
@@ -147,148 +150,133 @@ export default {
       betExamples: [
         {
           id: "straight-up",
-          label: "Straight-up",
-          category: "Aposta interna",
+          categoryKey: "betGuide.categoryInside",
           payout: "35:1",
           multiplier: 35,
           numbers: [17],
-          hint: "Clique diretamente em um número (ex.: 17).",
+          hintKey: "betGuide.hints.straightUp",
         },
         {
           id: "split",
-          label: "Split",
-          category: "Aposta interna",
+          categoryKey: "betGuide.categoryInside",
           payout: "17:1",
           multiplier: 17,
           numbers: [14, 17],
-          hint: "Clique na divisão entre dois números vizinhos (ex.: 14 e 17).",
+          hintKey: "betGuide.hints.split",
         },
         {
           id: "street",
-          label: "Street",
-          category: "Aposta interna",
+          categoryKey: "betGuide.categoryInside",
           payout: "11:1",
           multiplier: 11,
           numbers: [16, 17, 18],
-          hint: "Clique na borda da coluna com 3 números.",
+          hintKey: "betGuide.hints.street",
         },
         {
           id: "two street",
-          label: "Two Street",
-          category: "Aposta interna",
+          categoryKey: "betGuide.categoryInside",
           payout: "5:1",
           multiplier: 5,
           numbers: [16, 17, 18, 19, 20, 21],
-          hint: "Clique entre duas colunas vizinhas (6 números).",
+          hintKey: "betGuide.hints.twoStreet",
         },
         {
           id: "corner",
-          label: "Corner",
-          category: "Aposta interna",
+          categoryKey: "betGuide.categoryInside",
           payout: "8:1",
           multiplier: 8,
           numbers: [17, 18, 20, 21],
-          hint: "Clique no cruzamento de quatro números em bloco.",
+          hintKey: "betGuide.hints.corner",
         },
         {
           id: "line",
-          label: "Line",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "2:1",
           multiplier: 2,
           numbers: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36],
           lineCell: 1,
-          hint: "Clique no campo 2:1 da linha/coluna correspondente.",
+          hintKey: "betGuide.hints.line",
         },
         {
           id: "1st 12",
-          label: "1st 12",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "2:1",
           multiplier: 2,
           numbers: Array.from({ length: 12 }, (_, i) => i + 1),
           outsideCell: "1st 12",
-          hint: "Clique no bloco 1st 12 (números 1 a 12).",
+          hintKey: "betGuide.hints.first12",
         },
         {
           id: "2nd 12",
-          label: "2nd 12",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "2:1",
           multiplier: 2,
           numbers: Array.from({ length: 12 }, (_, i) => i + 13),
           outsideCell: "2nd 12",
-          hint: "Clique no bloco 2nd 12 (números 13 a 24).",
+          hintKey: "betGuide.hints.second12",
         },
         {
           id: "3rd 12",
-          label: "3rd 12",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "2:1",
           multiplier: 2,
           numbers: Array.from({ length: 12 }, (_, i) => i + 25),
           outsideCell: "3rd 12",
-          hint: "Clique no bloco 3rd 12 (números 25 a 36).",
+          hintKey: "betGuide.hints.third12",
         },
         {
           id: "1-18",
-          label: "1-18",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "1:1",
           multiplier: 1,
           numbers: Array.from({ length: 18 }, (_, i) => i + 1),
           outsideCell: "1-18",
-          hint: "Clique em 1-18 para cobrir os números baixos.",
+          hintKey: "betGuide.hints.low",
         },
         {
           id: "even",
-          label: "Even",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "1:1",
           multiplier: 1,
           numbers: Array.from({ length: 36 }, (_, i) => i + 1).filter((n) => n % 2 === 0),
-          outsideCell: "Even",
-          hint: "Clique em Even para cobrir todos os pares.",
+          outsideCell: "even",
+          hintKey: "betGuide.hints.even",
         },
         {
           id: "red",
-          label: "Red",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "1:1",
           multiplier: 1,
           numbers: [1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36],
-          outsideCell: "Red",
-          hint: "Clique em Red para cobrir os 18 números vermelhos.",
+          outsideCell: "red",
+          hintKey: "betGuide.hints.red",
         },
         {
           id: "black",
-          label: "Black",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "1:1",
           multiplier: 1,
           numbers: [2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35],
-          outsideCell: "Black",
-          hint: "Clique em Black para cobrir os 18 números pretos.",
+          outsideCell: "black",
+          hintKey: "betGuide.hints.black",
         },
         {
           id: "odd",
-          label: "Odd",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "1:1",
           multiplier: 1,
           numbers: Array.from({ length: 36 }, (_, i) => i + 1).filter((n) => n % 2 === 1),
-          outsideCell: "Odd",
-          hint: "Clique em Odd para cobrir todos os ímpares.",
+          outsideCell: "odd",
+          hintKey: "betGuide.hints.odd",
         },
         {
           id: "19-36",
-          label: "19-36",
-          category: "Aposta externa",
+          categoryKey: "betGuide.categoryOutside",
           payout: "1:1",
           multiplier: 1,
           numbers: Array.from({ length: 18 }, (_, i) => i + 19),
           outsideCell: "19-36",
-          hint: "Clique em 19-36 para cobrir os números altos.",
+          hintKey: "betGuide.hints.high",
         },
       ],
     };
@@ -313,8 +301,8 @@ export default {
     },
     gridMarkerStyle() {
       const positions = this.selectedExample.numbers.map((number) => this.numberPosition(number));
-      const avgCol = positions.reduce((acc, p) => acc + p.col, 0) / positions.length;
-      const avgRow = positions.reduce((acc, p) => acc + p.row, 0) / positions.length;
+      const avgCol = positions.reduce((acc, point) => acc + point.col, 0) / positions.length;
+      const avgRow = positions.reduce((acc, point) => acc + point.row, 0) / positions.length;
       return {
         left: `${((avgCol + 0.5) / 12) * 100}%`,
         top: `${((avgRow + 0.5) / 3) * 100}%`,
@@ -322,6 +310,9 @@ export default {
     },
   },
   methods: {
+    betTypeLabel(type) {
+      return translateBetType((key, params) => this.$t(key, params), type);
+    },
     numberAt(row, col) {
       const rowOffset = [3, 2, 1];
       return col * 3 + rowOffset[row];

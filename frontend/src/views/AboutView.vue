@@ -1,29 +1,20 @@
 <template>
   <section class="glass-card p-4 p-md-5">
-    <h1 class="page-title">Sobre a plataforma</h1>
-    <p class="page-lead mb-4">
-      Este projeto simula uma roleta com carteira virtual e fluxo completo de apostas, incluindo validação de regras no backend,
-      histórico de transações e autenticação baseada em JWT com cookies HTTP only.
-    </p>
+    <h1 class="page-title">{{ $t("aboutPage.title") }}</h1>
+    <p class="page-lead mb-4">{{ $t("aboutPage.lead") }}</p>
 
     <div class="about-grid">
       <article class="about-item">
-        <h3>Backend sólido</h3>
-        <p>
-          API em Django REST com validação de tipos de aposta, bloqueio por saldo insuficiente e rastreabilidade de cada ganho/perda na carteira.
-        </p>
+        <h3>{{ $t("aboutPage.backendTitle") }}</h3>
+        <p>{{ $t("aboutPage.backendDescription") }}</p>
       </article>
       <article class="about-item">
-        <h3>UX de aposta</h3>
-        <p>
-          Interface responsiva inspirada em mesas de cassino, com seleção de fichas, status de giro e feedback imediato do resultado líquido.
-        </p>
+        <h3>{{ $t("aboutPage.uxTitle") }}</h3>
+        <p>{{ $t("aboutPage.uxDescription") }}</p>
       </article>
       <article class="about-item">
-        <h3>Qualidade</h3>
-        <p>
-          Cobertura por testes automatizados e workflow CI para executar lint/build no frontend e testes completos no backend.
-        </p>
+        <h3>{{ $t("aboutPage.qualityTitle") }}</h3>
+        <p>{{ $t("aboutPage.qualityDescription") }}</p>
       </article>
     </div>
   </section>

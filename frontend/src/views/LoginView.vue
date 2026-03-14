@@ -1,43 +1,43 @@
 <template>
   <section class="auth-shell glass-card p-4 p-md-5">
-    <h1 class="page-title">Entrar</h1>
-    <p class="page-lead mb-4">Acesse sua conta para liberar a mesa e apostar com carteira.</p>
+    <h1 class="page-title">{{ $t("auth.login.title") }}</h1>
+    <p class="page-lead mb-4">{{ $t("auth.login.lead") }}</p>
 
     <form @submit.prevent="getPermission" class="auth-form">
       <div class="mb-3 text-start">
-        <label class="form-label">Usuário</label>
+        <label class="form-label">{{ $t("auth.login.usernameLabel") }}</label>
         <input
           type="text"
           class="form-control"
           v-model.trim="formData.username"
-          placeholder="Digite seu usuário"
+          :placeholder="$t('auth.login.usernamePlaceholder')"
           :class="{ 'is-invalid': verification && !formData.username }"
         />
-        <p class="invalid-feedback" v-if="verification && !formData.username">Usuário obrigatório.</p>
+        <p class="invalid-feedback" v-if="verification && !formData.username">{{ $t("auth.login.usernameRequired") }}</p>
       </div>
 
       <div class="mb-3 text-start">
-        <label class="form-label">Senha</label>
+        <label class="form-label">{{ $t("auth.login.passwordLabel") }}</label>
         <input
           type="password"
           class="form-control"
           v-model.trim="formData.password"
-          placeholder="Digite sua senha"
+          :placeholder="$t('auth.login.passwordPlaceholder')"
           :class="{ 'is-invalid': verification && !formData.password }"
         />
-        <p class="invalid-feedback" v-if="verification && !formData.password">Senha obrigatória.</p>
+        <p class="invalid-feedback" v-if="verification && !formData.password">{{ $t("auth.login.passwordRequired") }}</p>
       </div>
 
       <p v-if="errorMessage" class="text-danger fw-semibold mb-3">{{ errorMessage }}</p>
 
       <button type="submit" class="btn btn-brand w-100" :disabled="isSubmitting">
-        {{ isSubmitting ? "Entrando..." : "Entrar" }}
+        {{ isSubmitting ? $t("auth.login.submitting") : $t("auth.login.submit") }}
       </button>
     </form>
 
     <p class="m-0 mt-3 text-center">
-      Não tem conta?
-      <RouterLink class="fw-bold text-decoration-none" to="/register">Cadastre-se</RouterLink>
+      {{ $t("auth.login.noAccount") }}
+      <RouterLink class="fw-bold text-decoration-none" to="/register">{{ $t("auth.login.registerCta") }}</RouterLink>
     </p>
   </section>
 </template>
@@ -74,7 +74,7 @@ export default {
         this.verification = false;
         this.$router.push("/");
       } catch (error) {
-        this.errorMessage = error?.userMessage || "Não foi possível entrar agora. Tente novamente.";
+        this.errorMessage = error?.userMessage || this.$t("auth.login.fallbackError");
       } finally {
         this.isSubmitting = false;
       }
@@ -82,7 +82,7 @@ export default {
   },
   mounted() {
     if (this.$route.query.reason === "session_expired") {
-      this.errorMessage = "Sua sessão expirou. Faça login novamente para continuar.";
+      this.errorMessage = this.$t("auth.sessionExpired");
     }
   },
 };

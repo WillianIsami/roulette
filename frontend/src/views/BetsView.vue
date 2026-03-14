@@ -1,10 +1,8 @@
 <template>
   <section>
     <div class="text-center mb-3">
-      <h1 class="page-title">Mercado de Apostas</h1>
-      <p class="page-lead">
-        Confira todas as modalidades disponíveis na API e use este guia como referência antes de montar sua mesa.
-      </p>
+      <h1 class="page-title">{{ $t("betsPage.title") }}</h1>
+      <p class="page-lead">{{ $t("betsPage.lead") }}</p>
     </div>
     <BetGuideInteractive />
     <ListBets />

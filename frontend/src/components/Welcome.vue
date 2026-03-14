@@ -1,13 +1,11 @@
 <template>
   <section class="welcome glass-card p-4 p-md-5">
     <div class="welcome-content">
-      <p class="pill-label mb-3">Nova identidade visual</p>
-      <h1 class="page-title">Roulette com carteira virtual e fluxo real de aposta</h1>
-      <p class="page-lead mb-0">
-        Monte sua estratégia, escolha fichas, faça depósito de moedas e acompanhe cada resultado da roleta com histórico de transações em tempo real.
-      </p>
+      <p class="pill-label mb-3">{{ $t("welcome.badge") }}</p>
+      <h1 class="page-title">{{ $t("welcome.title") }}</h1>
+      <p class="page-lead mb-0">{{ $t("welcome.description") }}</p>
     </div>
-    <img src="@/assets/branding/brand-banner.svg" alt="Roulette Royale" class="welcome-art" />
+    <img src="@/assets/branding/brand-banner.svg" :alt="$t('common.appName')" class="welcome-art" />
   </section>
 </template>
 

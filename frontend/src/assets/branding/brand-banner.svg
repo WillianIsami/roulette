@@ -47,7 +47,7 @@
 
   <g fill="#F5E7C5" font-family="'Trebuchet MS', sans-serif">
     <text x="760" y="270" font-size="74" font-weight="700">Roulette Royale</text>
-    <text x="760" y="340" font-size="30" opacity="0.9">Apostas com carteira virtual, roleta real e UX otimizada</text>
+    <text x="760" y="340" font-size="30" opacity="0.9">Virtual wallet bets, real roulette flow, polished UX</text>
     <text x="760" y="410" font-size="24" opacity="0.85">Backend Django + Frontend Vue.js</text>
   </g>
 </svg>

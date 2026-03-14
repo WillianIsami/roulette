@@ -1,109 +1,67 @@
 <template>
   <section class="glass-card p-4 p-md-5">
-    <h1 class="page-title">Como jogar (modo iniciante)</h1>
-    <p class="page-lead mb-4">
-      Em menos de 2 minutos você consegue entender tudo: onde clicar, quanto pode ganhar e como ler o resultado líquido da rodada.
-    </p>
+    <h1 class="page-title">{{ $t("howToPlay.title") }}</h1>
+    <p class="page-lead mb-4">{{ $t("howToPlay.lead") }}</p>
 
     <div class="quick-steps mb-4">
       <article class="step-card">
-        <h3>1. Abasteça sua carteira</h3>
-        <p>Use os botões de depósito rápido para colocar moedas e começar sem travar no saldo.</p>
+        <h3>{{ $t("howToPlay.steps.walletTitle") }}</h3>
+        <p>{{ $t("howToPlay.steps.walletDescription") }}</p>
       </article>
       <article class="step-card">
-        <h3>2. Escolha o valor da ficha</h3>
-        <p>A ficha define quanto cada clique adiciona na aposta: 5, 10, 25, 50 ou 100 moedas.</p>
+        <h3>{{ $t("howToPlay.steps.chipTitle") }}</h3>
+        <p>{{ $t("howToPlay.steps.chipDescription") }}</p>
       </article>
       <article class="step-card">
-        <h3>3. Monte sua combinação</h3>
-        <p>Aposte interno (mais risco, maior retorno) ou externo (mais chance, retorno menor).</p>
+        <h3>{{ $t("howToPlay.steps.comboTitle") }}</h3>
+        <p>{{ $t("howToPlay.steps.comboDescription") }}</p>
       </article>
       <article class="step-card">
-        <h3>4. Gire e aguarde parar</h3>
-        <p>O número é revelado só quando a roleta para. Depois disso, você vê lucro, perdas e saldo final.</p>
+        <h3>{{ $t("howToPlay.steps.spinTitle") }}</h3>
+        <p>{{ $t("howToPlay.steps.spinDescription") }}</p>
       </article>
     </div>
 
     <section class="formula-box mb-4">
-      <h2 class="section-title mb-2">Como ler retorno e lucro</h2>
-      <p class="mb-2">
-        <strong>Retorno líquido ao acertar</strong> é o lucro da aposta vencedora, sem contar o valor da ficha.
-      </p>
-      <p class="mb-2"><strong>Retorno total recebido</strong> = ficha + lucro.</p>
-      <p class="mb-0">
-        <strong>Resultado líquido da rodada</strong> = soma dos lucros vencedores - soma das apostas perdidas.
-      </p>
+      <h2 class="section-title mb-2">{{ $t("howToPlay.formulaTitle") }}</h2>
+      <p class="mb-2"><strong>{{ $t("howToPlay.formulaProfit") }}</strong></p>
+      <p class="mb-2"><strong>{{ $t("howToPlay.formulaTotal") }}</strong></p>
+      <p class="mb-0"><strong>{{ $t("howToPlay.formulaNet") }}</strong></p>
     </section>
 
-    <h2 class="section-title mb-2">Pagamentos por cobertura</h2>
+    <h2 class="section-title mb-2">{{ $t("howToPlay.payoutTitle") }}</h2>
     <div class="table-responsive mb-4">
       <table class="table table-sm table-striped mb-0 payout-table">
         <thead>
           <tr>
-            <th>Tipo</th>
-            <th>Números cobertos</th>
-            <th>Lucro líquido (acerto)</th>
-            <th>Retorno total (ficha 5)</th>
+            <th>{{ $t("howToPlay.payoutHeaders.type") }}</th>
+            <th>{{ $t("howToPlay.payoutHeaders.coveredNumbers") }}</th>
+            <th>{{ $t("howToPlay.payoutHeaders.netProfit") }}</th>
+            <th>{{ $t("howToPlay.payoutHeaders.totalReturn") }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Straight-up</td>
-            <td>1</td>
-            <td>35:1</td>
-            <td>180.00</td>
-          </tr>
-          <tr>
-            <td>Split</td>
-            <td>2</td>
-            <td>17:1</td>
-            <td>90.00</td>
-          </tr>
-          <tr>
-            <td>Street</td>
-            <td>3</td>
-            <td>11:1</td>
-            <td>60.00</td>
-          </tr>
-          <tr>
-            <td>Corner / Basket</td>
-            <td>4</td>
-            <td>8:1</td>
-            <td>45.00</td>
-          </tr>
-          <tr>
-            <td>Two Street</td>
-            <td>6</td>
-            <td>5:1</td>
-            <td>30.00</td>
-          </tr>
-          <tr>
-            <td>Line / Dozens</td>
-            <td>12</td>
-            <td>2:1</td>
-            <td>15.00</td>
-          </tr>
-          <tr>
-            <td>Cor / Paridade / Faixa</td>
-            <td>18</td>
-            <td>1:1</td>
-            <td>10.00</td>
+          <tr v-for="row in payoutRows" :key="row.typeKey">
+            <td>{{ $t(row.typeKey) }}</td>
+            <td>{{ row.covered }}</td>
+            <td>{{ row.net }}</td>
+            <td>{{ row.total }}</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <section class="result-example mb-4">
-      <h2 class="section-title mb-2">Exemplo real de resultado líquido</h2>
-      <p class="mb-1">Você apostou 45.00 no total.</p>
-      <p class="mb-1">Apostas vencedoras geraram +25.00 de lucro.</p>
-      <p class="mb-1">Apostas perdedoras somaram -25.00.</p>
-      <p class="mb-0"><strong>Resultado líquido = 0.00</strong> (nem ganhou, nem perdeu no giro).</p>
+      <h2 class="section-title mb-2">{{ $t("howToPlay.resultExampleTitle") }}</h2>
+      <p class="mb-1">{{ $t("howToPlay.resultExampleStake") }}</p>
+      <p class="mb-1">{{ $t("howToPlay.resultExampleWins") }}</p>
+      <p class="mb-1">{{ $t("howToPlay.resultExampleLosses") }}</p>
+      <p class="mb-0"><strong>{{ $t("howToPlay.resultExampleNet") }}</strong></p>
     </section>
 
     <div class="cta-box d-flex flex-wrap align-items-center justify-content-between gap-2">
-      <p class="mb-0 fw-semibold">Pronto para testar uma estratégia na mesa?</p>
-      <RouterLink to="/" class="btn btn-brand">Ir para a roleta</RouterLink>
+      <p class="mb-0 fw-semibold">{{ $t("howToPlay.cta") }}</p>
+      <RouterLink to="/" class="btn btn-brand">{{ $t("howToPlay.ctaButton") }}</RouterLink>
     </div>
   </section>
 </template>
@@ -111,6 +69,19 @@
 <script>
 export default {
   name: "HowToPlay",
+  computed: {
+    payoutRows() {
+      return [
+        { typeKey: "howToPlay.payoutRows.straightUp", covered: "1", net: "35:1", total: "180.00" },
+        { typeKey: "howToPlay.payoutRows.split", covered: "2", net: "17:1", total: "90.00" },
+        { typeKey: "howToPlay.payoutRows.street", covered: "3", net: "11:1", total: "60.00" },
+        { typeKey: "howToPlay.payoutRows.corner", covered: "4", net: "8:1", total: "45.00" },
+        { typeKey: "howToPlay.payoutRows.twoStreet", covered: "6", net: "5:1", total: "30.00" },
+        { typeKey: "howToPlay.payoutRows.lineDozen", covered: "12", net: "2:1", total: "15.00" },
+        { typeKey: "howToPlay.payoutRows.evenMoney", covered: "18", net: "1:1", total: "10.00" },
+      ];
+    },
+  },
 };
 </script>
 

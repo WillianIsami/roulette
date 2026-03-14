@@ -1,9 +1,9 @@
 <template>
   <section class="glass-card p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-      <h2 class="section-title mb-0">Tipos de apostas disponíveis</h2>
+      <h2 class="section-title mb-0">{{ $t("listBets.title") }}</h2>
       <button class="btn btn-brand-outline" type="button" @click="getData" :disabled="loading">
-        {{ loading ? "Carregando..." : "Atualizar" }}
+        {{ loading ? $t("common.loading") : $t("common.refresh") }}
       </button>
     </div>
 
@@ -11,14 +11,14 @@
 
     <div v-if="responseData" class="bet-grid">
       <div class="bet-card" v-for="(bet, index) in bets.bets" :key="index">
-        <p class="mb-1 small text-muted">Aposta {{ index + 1 }}</p>
-        <strong>{{ bet }}</strong>
+        <p class="mb-1 small text-muted">{{ $t("listBets.betLabel", { index: index + 1 }) }}</p>
+        <strong>{{ formatBetLabel(bet) }}</strong>
       </div>
     </div>
 
     <div v-else-if="!loading" class="text-muted">
-      Faça login para visualizar e apostar.
-      <RouterLink class="fw-bold text-decoration-none" to="/login">Entrar</RouterLink>
+      {{ $t("listBets.empty") }}
+      <RouterLink class="fw-bold text-decoration-none" to="/login">{{ $t("nav.login") }}</RouterLink>
     </div>
   </section>
 </template>
@@ -26,6 +26,7 @@
 <script>
 import { fetchBets } from "@/services/apiService";
 import { isAuthError } from "@/services/errorService";
+import { translateBetType } from "@/utils/betType";
 
 export default {
   name: "ListBets",
@@ -41,15 +42,18 @@ export default {
     this.getData();
   },
   methods: {
+    formatBetLabel(type) {
+      return translateBetType((key, params) => this.$t(key, params), type);
+    },
     async handleError(error) {
-      const message = error?.userMessage || "Não foi possível carregar os tipos de aposta agora.";
+      const message = error?.userMessage || this.$t("listBets.loadError");
       this.errorMessage = message;
 
       if (!isAuthError(error)) {
         return;
       }
 
-      this.errorMessage = "Sua sessão expirou. Redirecionando para login...";
+      this.errorMessage = this.$t("listBets.sessionExpiredRedirect");
       try {
         await this.$store.dispatch("logout");
       } catch (_) {

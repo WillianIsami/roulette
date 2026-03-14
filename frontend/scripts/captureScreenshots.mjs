@@ -132,6 +132,9 @@ async function main() {
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1600, height: 1200 } });
+  await context.addInitScript(() => {
+    window.localStorage.setItem("roulette.locale", "en");
+  });
   const page = await context.newPage();
 
   await loginFlow(context, page);

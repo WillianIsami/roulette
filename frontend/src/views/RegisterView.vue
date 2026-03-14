@@ -1,48 +1,48 @@
 <template>
   <section class="auth-shell glass-card p-4 p-md-5">
-    <h1 class="page-title">Criar conta</h1>
-    <p class="page-lead mb-4">Cadastre-se para usar carteira, roleta e histórico de apostas.</p>
+    <h1 class="page-title">{{ $t("auth.register.title") }}</h1>
+    <p class="page-lead mb-4">{{ $t("auth.register.lead") }}</p>
 
     <form @submit.prevent="getPermission" class="auth-form">
       <div class="mb-3 text-start">
-        <label class="form-label">Usuário</label>
+        <label class="form-label">{{ $t("auth.register.usernameLabel") }}</label>
         <input
           type="text"
           class="form-control"
           v-model.trim="username"
-          placeholder="Escolha um usuário"
+          :placeholder="$t('auth.register.usernamePlaceholder')"
           :class="{ 'is-invalid': verification && !usernameIsValid }"
         />
         <p class="invalid-feedback" v-if="verification && !usernameIsValid">
-          Usuário deve ter ao menos 3 caracteres.
+          {{ $t("auth.register.usernameMinLength") }}
         </p>
       </div>
 
       <div class="mb-3 text-start">
-        <label class="form-label">Senha</label>
+        <label class="form-label">{{ $t("auth.register.passwordLabel") }}</label>
         <input
           type="password"
           class="form-control"
           v-model.trim="password"
-          placeholder="Crie uma senha"
+          :placeholder="$t('auth.register.passwordPlaceholder')"
           :class="{ 'is-invalid': verification && !passwordIsValid }"
         />
         <p class="invalid-feedback" v-if="verification && !passwordIsValid">
-          Senha deve ter pelo menos 8 caracteres.
+          {{ $t("auth.register.passwordMinLength") }}
         </p>
       </div>
 
       <div class="mb-3 text-start">
-        <label class="form-label">Confirmar senha</label>
+        <label class="form-label">{{ $t("auth.register.confirmPasswordLabel") }}</label>
         <input
           type="password"
           class="form-control"
           v-model.trim="confirmPassword"
-          placeholder="Repita a senha"
+          :placeholder="$t('auth.register.confirmPasswordPlaceholder')"
           :class="{ 'is-invalid': verification && !passwordsMatch }"
         />
         <p class="invalid-feedback" v-if="verification && !passwordsMatch">
-          As senhas precisam ser iguais.
+          {{ $t("auth.register.passwordMismatch") }}
         </p>
       </div>
 
@@ -50,13 +50,13 @@
       <p v-if="successMessage" class="text-success fw-semibold mb-3">{{ successMessage }}</p>
 
       <button type="submit" class="btn btn-brand w-100" :disabled="isSubmitting">
-        {{ isSubmitting ? "Cadastrando..." : "Cadastrar" }}
+        {{ isSubmitting ? $t("auth.register.submitting") : $t("auth.register.submit") }}
       </button>
     </form>
 
     <p class="m-0 mt-3 text-center">
-      Já tem conta?
-      <RouterLink class="fw-bold text-decoration-none" to="/login">Entrar</RouterLink>
+      {{ $t("auth.register.haveAccount") }}
+      <RouterLink class="fw-bold text-decoration-none" to="/login">{{ $t("auth.register.loginCta") }}</RouterLink>
     </p>
   </section>
 </template>
@@ -108,7 +108,7 @@ export default {
           password: this.password,
         });
         this.verification = false;
-        this.successMessage = "Conta criada com sucesso. Redirecionando para login...";
+        this.successMessage = this.$t("auth.register.successCreated");
         this.username = "";
         this.password = "";
         this.confirmPassword = "";
@@ -116,7 +116,7 @@ export default {
           this.$router.push("/login");
         }, 800);
       } catch (error) {
-        this.errorMessage = error?.userMessage || "Não foi possível criar a conta.";
+        this.errorMessage = error?.userMessage || this.$t("auth.register.fallbackError");
       } finally {
         this.isSubmitting = false;
       }

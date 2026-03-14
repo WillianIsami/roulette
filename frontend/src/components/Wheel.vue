@@ -3,8 +3,8 @@
     <div class="d-flex flex-column flex-lg-row gap-4 align-items-start">
       <aside class="wheel-panel">
         <div class="panel-head mb-3">
-          <h2 class="section-title">Mesa ao vivo</h2>
-          <p class="mb-0">Clique em apostas, gire e acompanhe seu saldo.</p>
+          <h2 class="section-title">{{ $t("wheel.title") }}</h2>
+          <p class="mb-0">{{ $t("wheel.subtitle") }}</p>
         </div>
 
         <div class="roulette mt-2 mb-3">
@@ -22,7 +22,7 @@
         </div>
 
         <div class="result-chip">
-          <p class="mb-1">{{ isSpinning ? "Roleta girando..." : "Último número" }}</p>
+          <p class="mb-1">{{ isSpinning ? $t("wheel.spinning") : $t("wheel.lastNumber") }}</p>
           <strong>{{ isSpinning ? "?" : latestNumber === null ? "-" : latestNumber }}</strong>
         </div>
       </aside>

@@ -3,11 +3,11 @@
     <section class="info-grid mb-3">
       <div class="wallet-box">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <h3 class="section-title">Carteira</h3>
-          <span class="pill-label">Moedas virtuais</span>
+          <h3 class="section-title">{{ $t("roulette.walletTitle") }}</h3>
+          <span class="pill-label">{{ $t("common.virtualCoins") }}</span>
         </div>
         <p class="wallet-value mb-2">{{ Number(wallet.balance || 0).toFixed(2) }}</p>
-        <p class="wallet-note mb-3">Deposite moedas para apostar na mesa.</p>
+        <p class="wallet-note mb-3">{{ $t("roulette.walletNote") }}</p>
         <div class="d-flex flex-wrap gap-2">
           <button
             v-for="amount in quickDeposits"
@@ -24,23 +24,25 @@
 
       <div class="bet-box">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <h3 class="section-title">Aposta atual</h3>
-          <span class="pill-label">Total: {{ totalSelectedAmount.toFixed(2) }}</span>
+          <h3 class="section-title">{{ $t("roulette.currentBetTitle") }}</h3>
+          <span class="pill-label">{{ $t("common.total") }}: {{ totalSelectedAmount.toFixed(2) }}</span>
         </div>
-        <label class="chip-label" for="chipValue">Valor da ficha</label>
+        <label class="chip-label" for="chipValue">{{ $t("roulette.chipValue") }}</label>
         <select id="chipValue" v-model.number="chipValue" class="form-select mb-3 chip-select">
-          <option v-for="value in chipOptions" :key="value" :value="value">{{ value }} moedas</option>
+          <option v-for="value in chipOptions" :key="value" :value="value">
+            {{ $t("roulette.chipSuffix", { value }) }}
+          </option>
         </select>
 
         <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-outline-danger" @click="clearBets">Limpar apostas</button>
+          <button type="button" class="btn btn-outline-danger" @click="clearBets">{{ $t("roulette.clearBets") }}</button>
           <button
             type="button"
             class="btn btn-success"
             :disabled="isSubmitting || isSpinning || totalSelectedAmount <= 0"
             @click="sendAllBets"
           >
-            {{ isSubmitting || isSpinning ? "Girando..." : "Girar roleta" }}
+            {{ isSubmitting || isSpinning ? $t("roulette.spinning") : $t("roulette.spinWheel") }}
           </button>
         </div>
       </div>
@@ -61,7 +63,7 @@
               >
                 <span class="zero-label">0</span>
                 <div v-if="selectedBets['num-0']" class="chip number-chip bg-warning">
-                  <span class="chipSpan">{{ selectedBets['num-0'][0] }}</span>
+                  <span class="chipSpan">{{ selectedBets["num-0"][0] }}</span>
                 </div>
 
                 <button
@@ -143,7 +145,7 @@
                 class="outside-cell"
                 @click="genDozens(index, dozen)"
               >
-                <span>{{ dozen }}</span>
+                <span>{{ outsideBetLabel(dozen) }}</span>
                 <div v-if="selectedBets[dozen]" class="chip number-chip bg-warning">
                   <span class="chipSpan">{{ selectedBets[dozen][0] }}</span>
                 </div>
@@ -158,7 +160,7 @@
                 class="outside-cell"
                 @click="generalBets(bet)"
               >
-                <span>{{ bet }}</span>
+                <span>{{ outsideBetLabel(bet) }}</span>
                 <div v-if="selectedBets[bet]" class="chip number-chip bg-warning">
                   <span class="chipSpan">{{ selectedBets[bet][0] }}</span>
                 </div>
@@ -175,29 +177,29 @@
     </section>
 
     <section v-if="resolvedSpinData" class="result-box mb-3">
-      <h4 class="mb-2">Resultado do giro</h4>
+      <h4 class="mb-2">{{ $t("roulette.result.title") }}</h4>
       <div class="result-grid">
-        <p><strong>Número sorteado:</strong> {{ resolvedSpinData.drawn_number }}</p>
-        <p><strong>Valor apostado:</strong> {{ resolvedSpinData.total_bet }}</p>
-        <p><strong>Lucro em apostas vencedoras:</strong> {{ resolvedSpinData.total_winnings }}</p>
-        <p><strong>Perdas em apostas não vencedoras:</strong> {{ spinLosses(resolvedSpinData).toFixed(2) }}</p>
-        <p><strong>Retorno total do giro:</strong> {{ spinPayout(resolvedSpinData).toFixed(2) }}</p>
-        <p><strong>Resultado líquido:</strong> {{ resolvedSpinData.net_result }}</p>
+        <p><strong>{{ $t("roulette.result.drawnNumber") }}:</strong> {{ resolvedSpinData.drawn_number }}</p>
+        <p><strong>{{ $t("roulette.result.totalBet") }}:</strong> {{ resolvedSpinData.total_bet }}</p>
+        <p><strong>{{ $t("roulette.result.winningProfit") }}:</strong> {{ resolvedSpinData.total_winnings }}</p>
+        <p><strong>{{ $t("roulette.result.losingStake") }}:</strong> {{ spinLosses(resolvedSpinData).toFixed(2) }}</p>
+        <p><strong>{{ $t("roulette.result.totalReturn") }}:</strong> {{ spinPayout(resolvedSpinData).toFixed(2) }}</p>
+        <p><strong>{{ $t("roulette.result.netResult") }}:</strong> {{ resolvedSpinData.net_result }}</p>
       </div>
     </section>
 
     <section v-if="selectedBetList.length" class="selection-box mb-3">
-      <h4 class="mb-2">Apostas selecionadas</h4>
+      <h4 class="mb-2">{{ $t("roulette.selectedBets.title") }}</h4>
       <div class="selection-list">
         <div class="selection-item" v-for="bet in selectedBetList" :key="bet.key">
           <div>
             <strong>{{ bet.type }}</strong>
-            <p class="mb-0 text-muted small">Números: {{ bet.numbers.join(", ") }}</p>
+            <p class="mb-0 text-muted small">{{ $t("common.numbers") }}: {{ bet.numbers.join(", ") }}</p>
           </div>
           <div class="d-flex align-items-center gap-2">
             <span class="fw-semibold">{{ Number(bet.value).toFixed(2) }}</span>
             <button type="button" class="btn btn-sm btn-outline-secondary" @click="removeBet(bet.key)">
-              Remover
+              {{ $t("common.remove") }}
             </button>
           </div>
         </div>
@@ -206,8 +208,8 @@
 
     <section class="tx-box">
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
-        <h4 class="mb-0">Histórico de transações</h4>
-        <span class="pill-label">Total: {{ transactionTotal }}</span>
+        <h4 class="mb-0">{{ $t("roulette.transactions.title") }}</h4>
+        <span class="pill-label">{{ $t("common.total") }}: {{ transactionTotal }}</span>
       </div>
 
       <div class="tx-toolbar mb-2">
@@ -215,7 +217,7 @@
           v-model.trim="transactionQuery"
           type="text"
           class="form-control tx-search"
-          placeholder="Pesquisar por descrição ou valor (ex.: deposit, 25, loss)"
+          :placeholder="$t('roulette.transactions.searchPlaceholder')"
           :disabled="loadingTransactions"
           @input="onTransactionSearchInput"
         />
@@ -225,13 +227,13 @@
           :disabled="loadingTransactions"
           @click="refreshTransactions"
         >
-          {{ loadingTransactions ? "Atualizando..." : "Atualizar" }}
+          {{ loadingTransactions ? $t("roulette.transactions.updating") : $t("common.refresh") }}
         </button>
       </div>
 
-      <div v-if="loadingWallet && !transactions.length" class="text-muted">Carregando carteira...</div>
-      <div v-else-if="loadingTransactions && !transactions.length" class="text-muted">Carregando transações...</div>
-      <div v-else-if="!transactions.length" class="text-muted">Nenhuma transação encontrada para o filtro atual.</div>
+      <div v-if="loadingWallet && !transactions.length" class="text-muted">{{ $t("roulette.transactions.loadingWallet") }}</div>
+      <div v-else-if="loadingTransactions && !transactions.length" class="text-muted">{{ $t("roulette.transactions.loadingTransactions") }}</div>
+      <div v-else-if="!transactions.length" class="text-muted">{{ $t("roulette.transactions.empty") }}</div>
 
       <div v-else class="tx-list" @scroll.passive="handleTxScroll">
         <div class="tx-item" v-for="item in transactions" :key="item.id">
@@ -239,7 +241,7 @@
             <strong :class="Number(item.amount) >= 0 ? 'text-success' : 'text-danger'">
               {{ Number(item.amount) >= 0 ? "+" : "" }}{{ Number(item.amount).toFixed(2) }}
             </strong>
-            <p class="mb-0 small text-muted">{{ item.description || "Movimentação" }}</p>
+            <p class="mb-0 small text-muted">{{ transactionDescription(item) }}</p>
           </div>
           <small class="text-muted">{{ formatDate(item.timestamp) }}</small>
         </div>
@@ -253,9 +255,9 @@
           :disabled="loadingTransactions"
           @click="loadTransactions()"
         >
-          {{ loadingTransactions ? "Carregando..." : "Carregar mais" }}
+          {{ loadingTransactions ? $t("common.loading") : $t("roulette.transactions.loadMore") }}
         </button>
-        <small v-else-if="loadingTransactions" class="text-muted">Carregando...</small>
+        <small v-else-if="loadingTransactions" class="text-muted">{{ $t("common.loading") }}</small>
       </div>
     </section>
   </div>
@@ -264,6 +266,8 @@
 <script>
 import { depositCoins, fetchTransactions, fetchWallet, sendBets } from "@/services/apiService";
 import { isAuthError } from "@/services/errorService";
+import { translateBetType } from "@/utils/betType";
+import { formatTransactionDescription } from "@/utils/transactionDescription";
 
 export default {
   name: "RouletteComponent",
@@ -318,7 +322,7 @@ export default {
         36: "red",
       },
       bet_dozens: ["1st 12", "2nd 12", "3rd 12"],
-      bets: ["1-18", "Even", "Red", "Black", "Odd", "19-36"],
+      bets: ["1-18", "even", "red", "black", "odd", "19-36"],
       insideMarkers: [],
       zeroMarkers: [
         { key: "zero-0-3", type: "zero_bets", numbers: [0, 3], x: 0.96, y: 0.5, markerType: "zero-single" },
@@ -356,7 +360,7 @@ export default {
 
       this.wallet.balance = newSpinData.new_balance;
       this.feedbackError = "";
-      this.feedbackSuccess = `Roleta parada. Número sorteado: ${newSpinData.drawn_number}.`;
+      this.feedbackSuccess = this.$t("roulette.feedback.spinStopped", { number: newSpinData.drawn_number });
       await this.loadWallet({ refreshTransactions: true });
     },
   },
@@ -391,10 +395,26 @@ export default {
     }
   },
   methods: {
-    async handleError(error, fallbackMessage) {
+    translateBet(type) {
+      return translateBetType((key, params) => this.$t(key, params), type);
+    },
+
+    outsideBetLabel(type) {
+      return this.translateBet(type);
+    },
+
+    transactionDescription(item) {
+      return formatTransactionDescription(
+        (key, params) => this.$t(key, params),
+        item,
+        this.$t("roulette.transactions.defaultMovement"),
+      );
+    },
+
+    async handleError(error, fallbackKey) {
       if (isAuthError(error)) {
         this.feedbackSuccess = "";
-        this.feedbackError = "Sua sessão expirou. Redirecionando para login...";
+        this.feedbackError = this.$t("roulette.errors.sessionExpiredRedirect");
         try {
           await this.$store.dispatch("logout");
         } catch (_) {
@@ -407,7 +427,7 @@ export default {
         return;
       }
 
-      this.feedbackError = error?.userMessage || fallbackMessage;
+      this.feedbackError = error?.userMessage || this.$t(fallbackKey);
     },
 
     numberAt(row, col) {
@@ -510,18 +530,7 @@ export default {
     },
 
     formatBetType(type) {
-      const labels = {
-        "straight-up": "Straight-up",
-        split: "Split",
-        street: "Street",
-        "two street": "Two Street",
-        corner: "Corner",
-        line1: "Line 1 (2:1)",
-        line2: "Line 2 (2:1)",
-        line3: "Line 3 (2:1)",
-        zero_bets: "Zero Bets",
-      };
-      return labels[type] || type;
+      return this.translateBet(type);
     },
 
     touchBet(key) {
@@ -581,7 +590,7 @@ export default {
         odd: Array.from({ length: 36 }, (_, i) => i + 1).filter((num) => num % 2 === 1),
       };
       const resultBet = bets[cleanBet];
-      this.placeOutsideBet(bet, bet, resultBet);
+      this.placeOutsideBet(bet, cleanBet, resultBet);
     },
 
     clearBets() {
@@ -598,8 +607,10 @@ export default {
     },
 
     formatDate(value) {
-      if (!value) return "";
-      return new Date(value).toLocaleString();
+      if (!value) {
+        return "";
+      }
+      return new Date(value).toLocaleString(this.$i18n.locale);
     },
 
     getColor(number) {
@@ -663,7 +674,7 @@ export default {
         this.hasMoreTransactions = Boolean(pagination.has_next);
         this.transactionTotal = Number.isFinite(total) ? total : this.transactions.length;
       } catch (error) {
-        await this.handleError(error, "Não foi possível carregar o histórico de transações.");
+        await this.handleError(error, "roulette.errors.loadTransactions");
       } finally {
         this.loadingTransactions = false;
       }
@@ -691,7 +702,7 @@ export default {
           await this.loadTransactions({ reset: true });
         }
       } catch (error) {
-        await this.handleError(error, "Não foi possível carregar sua carteira agora.");
+        await this.handleError(error, "roulette.errors.loadWallet");
       } finally {
         this.loadingWallet = false;
       }
@@ -701,30 +712,30 @@ export default {
       try {
         const response = await depositCoins(amount);
         this.feedbackError = "";
-        this.feedbackSuccess = `Depósito realizado: +${response.amount} moedas`;
+        this.feedbackSuccess = this.$t("roulette.feedback.depositSuccess", { amount: response.amount });
         await this.loadWallet({ refreshTransactions: true });
       } catch (error) {
         this.feedbackSuccess = "";
-        await this.handleError(error, "Não foi possível completar o depósito.");
+        await this.handleError(error, "roulette.errors.deposit");
       }
     },
 
     async sendAllBets() {
       if (this.isSpinning) {
         this.feedbackSuccess = "";
-        this.feedbackError = "Aguarde a roleta terminar o giro atual.";
+        this.feedbackError = this.$t("roulette.validation.waitSpin");
         return;
       }
 
       if (Object.keys(this.selectedBets).length === 0) {
         this.feedbackSuccess = "";
-        this.feedbackError = "Selecione ao menos uma aposta.";
+        this.feedbackError = this.$t("roulette.validation.pickBet");
         return;
       }
 
       if (Number(this.wallet.balance) < this.totalSelectedAmount) {
         this.feedbackSuccess = "";
-        this.feedbackError = "Saldo insuficiente para o total apostado.";
+        this.feedbackError = this.$t("roulette.validation.insufficientForStake");
         return;
       }
 
@@ -733,12 +744,12 @@ export default {
 
       try {
         const data = await sendBets(this.selectedBets);
-        this.feedbackSuccess = "Aposta confirmada. A roleta está girando...";
+        this.feedbackSuccess = this.$t("roulette.feedback.betConfirmed");
         this.$emit("spin", data);
         this.clearBets();
       } catch (error) {
         this.feedbackSuccess = "";
-        await this.handleError(error, "Não foi possível enviar suas apostas.");
+        await this.handleError(error, "roulette.errors.sendBets");
       } finally {
         this.isSubmitting = false;
       }
@@ -760,7 +771,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .roulette-border {
   width: 100%;

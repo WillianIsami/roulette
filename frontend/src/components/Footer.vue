@@ -1,17 +1,17 @@
 <template>
   <footer class="footer-shell d-flex flex-wrap align-items-center justify-content-between gap-3 px-3 px-md-4 py-3">
     <div class="d-flex align-items-center gap-2">
-      <img src="@/assets/branding/brand-mark.svg" alt="brand" class="footer-logo" />
+      <img src="@/assets/branding/brand-mark.svg" :alt="$t('common.appName')" class="footer-logo" />
       <div>
-        <p class="mb-0 footer-title">Roulette Royale</p>
-        <small class="footer-copy">© {{ currentYear }} - Plataforma de simulação educacional</small>
+        <p class="mb-0 footer-title">{{ $t("common.appName") }}</p>
+        <small class="footer-copy">© {{ currentYear }} - {{ $t("footer.caption") }}</small>
       </div>
     </div>
 
     <div class="d-flex gap-2 align-items-center">
       <span class="pill-label">Vue 3</span>
-      <span class="pill-label">Django API</span>
-      <span class="pill-label">Wallet Coins</span>
+      <span class="pill-label">{{ $t("footer.djangoApi") }}</span>
+      <span class="pill-label">{{ $t("common.walletCoins") }}</span>
     </div>
   </footer>
 </template>

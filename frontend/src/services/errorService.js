@@ -1,8 +1,11 @@
+import { translate } from "@/i18n";
+
 export class AppError extends Error {
   constructor({ userMessage, technicalMessage = "", status = null, code = "UNKNOWN", details = null }) {
-    super(userMessage || "Não foi possível concluir a operação.");
+    const fallbackMessage = translate("errors.operationFailed");
+    super(userMessage || fallbackMessage);
     this.name = "AppError";
-    this.userMessage = userMessage || "Não foi possível concluir a operação.";
+    this.userMessage = userMessage || fallbackMessage;
     this.technicalMessage = technicalMessage;
     this.status = status;
     this.code = code;
@@ -45,6 +48,13 @@ function normalizeText(value) {
   return String(value).trim().toLowerCase();
 }
 
+function buildMappedError(code, key) {
+  return {
+    code,
+    userMessage: translate(key),
+  };
+}
+
 function mapMessage({ status, payload, technicalMessage = "" }) {
   const raw = extractBackendMessage(payload).trim();
   const normalized = normalizeText(raw);
@@ -56,10 +66,7 @@ function mapMessage({ status, payload, technicalMessage = "" }) {
     normalized.includes("token not provided") ||
     normalized.includes("not authenticated")
   ) {
-    return {
-      code: "AUTH_REQUIRED",
-      userMessage: "Sua sessão expirou. Faça login novamente.",
-    };
+    return buildMappedError("AUTH_REQUIRED", "errors.authRequired");
   }
 
   if (
@@ -67,68 +74,47 @@ function mapMessage({ status, payload, technicalMessage = "" }) {
     normalized.includes("no active account found") ||
     normalized.includes("unable to log in")
   ) {
-    return {
-      code: "INVALID_CREDENTIALS",
-      userMessage: "Usuário ou senha inválidos. Verifique e tente novamente.",
-    };
+    return buildMappedError("INVALID_CREDENTIALS", "errors.invalidCredentials");
   }
 
   if (normalized.includes("insufficient balance")) {
-    return {
-      code: "INSUFFICIENT_BALANCE",
-      userMessage: "Saldo insuficiente para essa aposta.",
-    };
+    return buildMappedError("INSUFFICIENT_BALANCE", "errors.insufficientBalance");
   }
 
-  if (normalized.includes("bet not found") || normalized.includes("unknown bet type")) {
-    return {
-      code: "INVALID_BET",
-      userMessage: "Aposta inválida. Revise os números selecionados e tente novamente.",
-    };
+  if (
+    normalized.includes("bet not found") ||
+    normalized.includes("unknown bet type") ||
+    normalized.includes("at least one bet is required")
+  ) {
+    return buildMappedError("INVALID_BET", "errors.invalidBet");
   }
 
-  if (normalized.includes("invalid amount")) {
-    return {
-      code: "INVALID_AMOUNT",
-      userMessage: "Valor inválido. Digite um valor maior que zero.",
-    };
+  if (normalized.includes("invalid amount") || normalized.includes("positive number")) {
+    return buildMappedError("INVALID_AMOUNT", "errors.invalidAmount");
   }
 
   if (normalized.includes("already exists") || normalized.includes("unique")) {
-    return {
-      code: "DUPLICATED_USER",
-      userMessage: "Este nome de usuário já está em uso. Escolha outro.",
-    };
+    return buildMappedError("DUPLICATED_USER", "errors.duplicatedUser");
   }
 
   if (normalized.includes("username must contain at least")) {
-    return {
-      code: "INVALID_USERNAME",
-      userMessage: "Escolha um usuário com pelo menos 3 caracteres.",
-    };
+    return buildMappedError("INVALID_USERNAME", "errors.invalidUsername");
   }
 
   if (
     normalized.includes("password") &&
-    (
-      normalized.includes("minimum") ||
+    (normalized.includes("minimum") ||
       normalized.includes("too short") ||
       normalized.includes("must contain at least") ||
       normalized.includes("too common") ||
-      normalized.includes("entirely numeric")
-    )
+      normalized.includes("entirely numeric") ||
+      normalized.includes("too similar"))
   ) {
-    return {
-      code: "WEAK_PASSWORD",
-      userMessage: "A senha está fraca. Use pelo menos 8 caracteres.",
-    };
+    return buildMappedError("WEAK_PASSWORD", "errors.weakPassword");
   }
 
   if (status === 403 || normalized.includes("permission denied")) {
-    return {
-      code: "FORBIDDEN",
-      userMessage: "Você não tem permissão para executar essa ação.",
-    };
+    return buildMappedError("FORBIDDEN", "errors.forbidden");
   }
 
   if (
@@ -136,10 +122,7 @@ function mapMessage({ status, payload, technicalMessage = "" }) {
     normalized.includes("this field is required") ||
     normalized.includes("is required")
   ) {
-    return {
-      code: "MISSING_FIELDS",
-      userMessage: "Preencha os campos obrigatórios para continuar.",
-    };
+    return buildMappedError("MISSING_FIELDS", "errors.missingFields");
   }
 
   if (
@@ -148,37 +131,29 @@ function mapMessage({ status, payload, technicalMessage = "" }) {
     normalizedTechnical.includes("network") ||
     normalizedTechnical.includes("load failed")
   ) {
-    return {
-      code: "NETWORK_ERROR",
-      userMessage: "Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.",
-    };
+    return buildMappedError("NETWORK_ERROR", "errors.networkError");
   }
 
   if (status >= 500) {
-    return {
-      code: "SERVER_ERROR",
-      userMessage: "O servidor está indisponível no momento. Tente novamente em instantes.",
-    };
+    return buildMappedError("SERVER_ERROR", "errors.serverError");
   }
 
-  if (status === 404) {
-    return {
-      code: "NOT_FOUND",
-      userMessage: "Recurso não encontrado. Atualize a página e tente novamente.",
-    };
+  if (status === 404 || normalized.includes("not found")) {
+    return buildMappedError("NOT_FOUND", "errors.notFound");
   }
 
-  if (status === 400 && raw) {
+  if (status === 400) {
+    return buildMappedError("BAD_REQUEST", "errors.badRequest");
+  }
+
+  if (raw) {
     return {
-      code: "BAD_REQUEST",
+      code: "UNKNOWN",
       userMessage: raw,
     };
   }
 
-  return {
-    code: "UNKNOWN",
-    userMessage: raw || "Não foi possível concluir a operação. Tente novamente.",
-  };
+  return buildMappedError("UNKNOWN", "errors.operationFailed");
 }
 
 export function buildAppErrorFromHttpResponse(status, payload, technicalMessage = "") {
