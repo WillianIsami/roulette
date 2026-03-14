@@ -200,7 +200,12 @@ class WalletDepositView(APIView):
         Transaction.objects.create(
             wallet=wallet,
             amount=amount,
-            description=f"Deposit of {amount} coins",
+            description=build_transaction_description(
+                "transaction.wallet_deposit",
+                {"amount": str(amount)},
+            ),
+            description_key="transaction.wallet_deposit",
+            description_context={"amount": str(amount)},
         )
         wallet.refresh_from_db()
         return Response(
@@ -245,7 +250,7 @@ class TransactionListView(APIView):
         q = (request.query_params.get("q") or "").strip()
         transactions_qs = wallet.transactions.all()
         if q:
-            query = Q(description__icontains=q)
+            query = Q(description__icontains=q) | Q(description_key__icontains=q)
             parsed_amount = parse_money(q)
             if parsed_amount is not None:
                 query |= Q(amount=parsed_amount)
@@ -336,19 +341,31 @@ class SpinRouletteView(APIView):
                 profit = self.calculate_profit(bet_value, len(bet_numbers))
                 total_winnings += profit
                 net_change = profit
-                description = (
-                    f"Win on {bet_type}: numbers {bet_numbers}, drawn {drawn_number}, "
-                    f"profit {profit}"
-                )
+                description_key = "transaction.bet_win"
+                description_context = {
+                    "bet_type": bet_type,
+                    "numbers": bet_numbers,
+                    "drawn_number": drawn_number,
+                    "profit": str(profit.quantize(MONEY_QUANTIZER)),
+                }
             else:
                 net_change = -bet_value
-                description = (
-                    f"Loss on {bet_type}: numbers {bet_numbers}, drawn {drawn_number}, "
-                    f"stake {-net_change}"
-                )
+                description_key = "transaction.bet_loss"
+                description_context = {
+                    "bet_type": bet_type,
+                    "numbers": bet_numbers,
+                    "drawn_number": drawn_number,
+                    "stake": str((-net_change).quantize(MONEY_QUANTIZER)),
+                }
 
             net_result += net_change
-            Transaction.objects.create(wallet=wallet, amount=net_change, description=description)
+            Transaction.objects.create(
+                wallet=wallet,
+                amount=net_change,
+                description=build_transaction_description(description_key, description_context),
+                description_key=description_key,
+                description_context=description_context,
+            )
             resolved_bets.append(
                 {
                     "type": bet_type,
@@ -490,6 +507,27 @@ def parse_money(raw_value):
         return Decimal(str(raw_value)).quantize(MONEY_QUANTIZER)
     except (InvalidOperation, TypeError, ValueError):
         return None
+
+
+def build_transaction_description(description_key, context):
+    if description_key == "transaction.wallet_deposit":
+        return f"Deposit of {context.get('amount', '0')} coins"
+
+    if description_key == "transaction.bet_win":
+        return (
+            "Win on "
+            f"{context.get('bet_type', 'unknown')}: numbers {context.get('numbers', [])}, "
+            f"drawn {context.get('drawn_number', '')}, profit {context.get('profit', '0')}"
+        )
+
+    if description_key == "transaction.bet_loss":
+        return (
+            "Loss on "
+            f"{context.get('bet_type', 'unknown')}: numbers {context.get('numbers', [])}, "
+            f"drawn {context.get('drawn_number', '')}, stake {context.get('stake', '0')}"
+        )
+
+    return context.get("description", "")
 
 
 def get_user_from_cookie(request):

@@ -16,6 +16,8 @@ class Transaction(models.Model):
     wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name='transactions')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.CharField(max_length=255, default="")
+    description_key = models.CharField(max_length=64, default="", blank=True)
+    description_context = models.JSONField(default=dict, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

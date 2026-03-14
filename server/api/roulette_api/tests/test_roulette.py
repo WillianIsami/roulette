@@ -137,7 +137,7 @@ class BetTest(TestCase):
                 with self.assertRaises(InvalidBet):
                     Bet.create_corner(100., input)
 
-class RoletaTest(TestCase):
+class RouletteTest(TestCase):
 
     def test_run_test(self):
         self.assertTrue(True)

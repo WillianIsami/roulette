@@ -217,6 +217,11 @@ class SpinRouletteViewTests(APITestCase):
 
         self.wallet.refresh_from_db()
         self.assertEqual(float(self.wallet.balance), 450.0)
+        last_transaction = Transaction.objects.filter(wallet=self.wallet).order_by("-id").first()
+        self.assertIsNotNone(last_transaction)
+        self.assertEqual(last_transaction.description_key, "transaction.bet_win")
+        self.assertEqual(last_transaction.description_context.get("bet_type"), "straight-up")
+        self.assertEqual(last_transaction.description_context.get("drawn_number"), 19)
 
 
 class SpinBetVerification(TestCase):
@@ -275,11 +280,25 @@ class WalletAndTransactionApiTests(APITestCase):
         wallet_response = self.client.get(wallet_url)
         self.assertEqual(wallet_response.status_code, status.HTTP_200_OK)
         self.assertEqual(wallet_response.data["wallet"]["balance"], "250.00")
+        self.assertEqual(
+            wallet_response.data["transactions"][0]["description_key"],
+            "transaction.wallet_deposit",
+        )
+        self.assertEqual(
+            wallet_response.data["transactions"][0]["description_context"]["amount"],
+            "250.00",
+        )
 
     @patch("roulette_api.views.token_validation")
     def test_transaction_list(self, mock_token_validation):
         mock_token_validation.return_value = {"user_id": self.user.id}
-        Transaction.objects.create(wallet=self.wallet, amount=100, description="deposit")
+        Transaction.objects.create(
+            wallet=self.wallet,
+            amount=100,
+            description="deposit",
+            description_key="transaction.wallet_deposit",
+            description_context={"amount": "100.00"},
+        )
 
         url = reverse("transaction_list")
         response = self.client.get(url)
@@ -289,14 +308,33 @@ class WalletAndTransactionApiTests(APITestCase):
         self.assertIn("pagination", response.data)
         self.assertEqual(len(response.data["results"]), 1)
         self.assertEqual(response.data["results"][0]["description"], "deposit")
+        self.assertEqual(response.data["results"][0]["description_key"], "transaction.wallet_deposit")
         self.assertEqual(response.data["pagination"]["total"], 1)
 
     @patch("roulette_api.views.token_validation")
     def test_transaction_list_with_search_and_offset(self, mock_token_validation):
         mock_token_validation.return_value = {"user_id": self.user.id}
-        Transaction.objects.create(wallet=self.wallet, amount=100, description="deposit")
-        Transaction.objects.create(wallet=self.wallet, amount=-20, description="Loss on red")
-        Transaction.objects.create(wallet=self.wallet, amount=35, description="Win on split")
+        Transaction.objects.create(
+            wallet=self.wallet,
+            amount=100,
+            description="deposit",
+            description_key="transaction.wallet_deposit",
+            description_context={"amount": "100.00"},
+        )
+        Transaction.objects.create(
+            wallet=self.wallet,
+            amount=-20,
+            description="Loss on red",
+            description_key="transaction.bet_loss",
+            description_context={"bet_type": "red"},
+        )
+        Transaction.objects.create(
+            wallet=self.wallet,
+            amount=35,
+            description="Win on split",
+            description_key="transaction.bet_win",
+            description_context={"bet_type": "split"},
+        )
 
         url = reverse("transaction_list")
         response = self.client.get(url, {"q": "loss", "limit": 1, "offset": 0})
@@ -306,6 +344,10 @@ class WalletAndTransactionApiTests(APITestCase):
         self.assertEqual(response.data["pagination"]["has_next"], False)
         self.assertEqual(len(response.data["results"]), 1)
         self.assertIn("Loss", response.data["results"][0]["description"])
+
+        key_search_response = self.client.get(url, {"q": "transaction.bet_loss"})
+        self.assertEqual(key_search_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(key_search_response.data["pagination"]["total"], 1)
 
 
 class CookieTokenObtainPairViewTests(TestCase):

@@ -30,6 +30,12 @@ def parse_bool(value, default):
         return False
     return default
 
+
+def parse_csv(value):
+    if value is None:
+        return []
+    return [item.strip() for item in str(value).split(',') if item.strip()]
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,13 +62,13 @@ CSRF_COOKIE_HTTPONLY = True
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
     default='*',
-    cast=lambda it: list(filter(None, it.split(','))),
+    cast=parse_csv,
 )
 
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',
     default=env('CORS_URL', default='http://localhost:8000'),
-    cast=lambda it: list(filter(None, it.split(','))),
+    cast=parse_csv,
 )
 
 # Application definition
@@ -91,9 +97,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    env('CORS_URL', default='http://localhost:8000'),
-]
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_URL',
+    default='http://localhost:8000',
+    cast=parse_csv,
+)
 
 CORS_ALLOW_CREDENTIALS = True
 
