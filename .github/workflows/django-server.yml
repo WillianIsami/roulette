@@ -1,61 +1,72 @@
+name: CI
+
 on:
- push:
-    branches: [ "main" ]
- pull_request:
-    branches: [ "main" ]
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
 permissions:
- contents: read
+  contents: read
 
 jobs:
   frontend:
+    name: Frontend (lint + build)
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x, 16.x, 18.x]
-    steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: './frontend/package-lock.json'
-    - name: Install lintfrontend dependencies, build and run lint
-      run: |
-        cd frontend
-        cp .env.example .env
-        npm install
-        npm run build
-        npm run lint
 
-  server:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: db_name
-          POSTGRES_USER: db_user
-          POSTGRES_PASSWORD: db_password
-        ports:
-          - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    - name: Set up python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
-    - name: install dependencies
-      run: |
-        cd server/api
-        pip install -r requirements.txt
-    - name: Run tests
-      env:
-        DATABASE_URL: postgres://db_user:db_password@localhost:5432/db_name
-      run: |
-        cd server/api
-        cp .env.example .env
-        python manage.py test
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build env file
+        run: cp .env.example .env
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run build
+        run: npm run build
+
+  backend:
+    name: Backend (tests)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server/api
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: server/api/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Build env file
+        run: cp .env.example .env
+
+      - name: Run tests
+        env:
+          USE_SQLITE: "true"
+        run: python manage.py test
