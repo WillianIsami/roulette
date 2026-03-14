@@ -4,9 +4,11 @@
 
 Roulette Royale is a full-stack roulette simulation platform with:
 
-- Django REST backend for authentication, bet validation, wallet and transactions
-- Vue 3 frontend with responsive roulette table, chip selection and wallet panel
-- JWT cookie auth (`access_token` + `refresh_token`)
+- Django REST backend for authentication, bet validation, wallet, and transactions
+- Vue 3 frontend with responsive roulette board, chip selection, and wallet panel
+- JWT cookie authentication (`access_token` + `refresh_token`)
+- Full multilingual UI (`en`, `pt-BR`, `es`)
+- Localized transaction descriptions rendered in the currently selected language
 - Automated test suite and GitHub Actions CI
 
 ## 2. Architecture
@@ -20,11 +22,22 @@ Roulette Royale is a full-stack roulette simulation platform with:
   - `Wallet` (one per user)
   - `Transaction` (credits/debits for deposit/win/loss)
 
+#### Transaction localization model
+
+Each transaction now stores:
+
+- `description` (human-readable fallback)
+- `description_key` (stable key, e.g. `transaction.bet_win`)
+- `description_context` (structured metadata for interpolation)
+
+This allows the frontend to translate the same transaction row into any supported language without re-fetching rewritten text from backend.
+
 ### Frontend (`frontend`)
 
 - Framework: Vue 3
 - Router: Vue Router (guarded routes)
-- State: Vuex module (`auth`)
+- State: Vuex (`auth` module)
+- Internationalization: Vue I18n + persisted locale
 - API integration: `fetch` + `axios`
 - Main gameplay UI: `Wheel.vue` + `RouletteBorder.vue`
 
@@ -34,15 +47,15 @@ All bets are validated server-side before applying wallet changes.
 
 ### Validation behavior
 
-- Rejects malformed bets (`[value, type, numbers]` required)
-- Rejects unknown bet types
-- Rejects invalid number combinations per roulette rule set
-- Rejects out-of-range numbers (must be `0..36`)
-- Rejects spin if wallet balance is lower than total stake
+- Reject malformed bets (`[value, type, numbers]` required)
+- Reject unknown bet types
+- Reject invalid number combinations per roulette rules
+- Reject out-of-range numbers (`0..36`)
+- Reject spin when wallet balance is lower than total stake
 
 ### Payout model
 
-Profit formula used on win:
+Profit formula on a winning bet:
 
 - `profit = (36 / covered_numbers) * value - value`
 
@@ -75,11 +88,11 @@ Examples:
 
 - `GET /api/wallet/?limit=10` - wallet summary + latest transactions
 - `POST /api/wallet/deposit/` - add virtual coins
-- `GET /api/transactions/?limit=20` - list transaction history
+- `GET /api/transactions/?limit=20` - paginated transaction history
 
 ## 5. Frontend Flows
 
-### Login/Register
+### Login / Register
 
 - `RegisterView` creates account through API
 - `LoginView` authenticates and redirects to home
@@ -88,23 +101,30 @@ Examples:
 ### Betting UX
 
 - Choose chip value (`5, 10, 25, 50, 100`)
-- Click table sectors (inside and outside bets)
-- See current selected bets and total stake
-- Spin and receive detailed response (`drawn_number`, `net_result`, `new_balance`)
+- Click roulette board sectors (inside and outside bets)
+- Track selected bets with total stake
+- Spin and receive full response (`drawn_number`, `net_result`, `new_balance`)
 
 ### Wallet UX
 
 - Quick deposits (`+100`, `+500`, `+1000`)
 - Live wallet balance
-- Latest transactions panel
+- Transaction panel with search, pagination, and infinite-scroll trigger
+
+### Language UX
+
+- Language selector in navbar (`English`, `Português (Brasil)`, `Español`)
+- Locale persisted in browser storage
+- All main UI text translated
+- Errors and transaction descriptions translated from keys/context
 
 ## 6. Design Direction
 
-Visual refresh is based on casino cues:
+Visual refresh follows casino references:
 
 - Green felt + gold accents
-- Rounded glass panels and clear hierarchy
-- Responsive grid and horizontal-safe table area
+- Rounded panels with clear hierarchy
+- Responsive board and overflow-safe table container
 
 Reference sources:
 
@@ -116,8 +136,8 @@ Reference sources:
 ### Backend
 
 - Location: `server/api/roulette_api/tests`
-- Includes roulette rules, API, wallet and transaction tests
-- Run with:
+- Coverage includes roulette rules, API, wallet, and transaction behavior
+- Run:
 
 ```bash
 cd server/api
@@ -145,9 +165,9 @@ Workflow file: `.github/workflows/django-server.yml`
   - `uv pip install -r requirements.txt`
   - `USE_SQLITE=true uv run python manage.py test`
 
-## 8.1 Backend Dependency Management (Recommended)
+## 9. Dependency Management with UV
 
-Use `uv` to avoid global Python dependency conflicts:
+Recommended backend flow to avoid global Python dependency conflicts:
 
 ```bash
 cd server/api
@@ -157,7 +177,7 @@ USE_SQLITE=true uv run python manage.py migrate
 USE_SQLITE=true uv run python manage.py runserver 0.0.0.0:8080
 ```
 
-## 9. Screenshots Automation
+## 10. Screenshot Automation
 
 Script:
 
@@ -165,7 +185,9 @@ Script:
 
 Behavior:
 
-- Captures the app shell of each route (`header + main + footer`) with outer margin (no full browser-page screenshot), reducing empty space.
+- Captures app shell (`header + main content + footer`) with external margin
+- Waits for route data loading before capture
+- Avoids full-browser-page screenshots with large empty areas
 
 Command:
 

@@ -1,6 +1,6 @@
 # Gallery
 
-These screenshots were generated with Playwright capturing the full app shell (`header + main content + footer`) with an outer visual margin (not a full browser-page screenshot), after waiting for route data loading.
+These screenshots were generated with Playwright capturing the full app shell (`header + main content + footer`) with an outer visual margin (not a full browser-page screenshot), after waiting for route data loading. The default locale for capture is English.
 
 ## Home
 

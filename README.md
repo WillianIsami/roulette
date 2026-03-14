@@ -1,18 +1,22 @@
 # Roulette Royale
 
-Plataforma completa de roleta com backend Django e frontend Vue, incluindo:
+Full-stack roulette simulation platform with Django backend and Vue frontend.
 
-- validação real de apostas no servidor
-- carteira virtual com depósito e histórico de transações
-- autenticação JWT por cookie HTTP-only
-- interface renovada, responsiva e otimizada para apostar
-- pipeline CI para lint/build/tests
+## Highlights
+
+- Real server-side roulette bet validation
+- Virtual wallet with deposit and transaction history
+- JWT authentication using HTTP-only cookies
+- Responsive casino-inspired UI
+- Full language switching (`English`, `Português (Brasil)`, `Español`)
+- Transaction descriptions localized in the active UI language
+- CI pipeline for frontend lint/build and backend tests
 
 ## Preview
 
 ![Home](./docs/screenshots/home.png)
 
-Mais imagens: [docs/SCREENSHOTS.md](./docs/SCREENSHOTS.md)
+More screenshots: [docs/SCREENSHOTS.md](./docs/SCREENSHOTS.md)
 
 ## Stack
 
@@ -21,24 +25,25 @@ Mais imagens: [docs/SCREENSHOTS.md](./docs/SCREENSHOTS.md)
 - Vue 3
 - Vue Router
 - Vuex
-- Bootstrap + tema customizado
+- Vue I18n
+- Bootstrap + custom theme
 
 ### Backend
 
 - Django
 - Django REST Framework
 - SimpleJWT
-- DRF-YASG (Swagger/ReDoc)
+- DRF-YASG (Swagger / ReDoc)
 
-## Estrutura do projeto
+## Project Structure
 
-- `frontend/` - aplicação Vue
-- `server/api/` - API Django
-- `docs/` - documentação detalhada e galeria de screenshots
+- `frontend/` - Vue application
+- `server/api/` - Django API
+- `docs/` - technical docs and screenshot gallery
 
-Documentação completa: [docs/PROJECT_DOCUMENTATION.md](./docs/PROJECT_DOCUMENTATION.md)
+Technical documentation: [docs/PROJECT_DOCUMENTATION.md](./docs/PROJECT_DOCUMENTATION.md)
 
-## Como rodar localmente (sem Docker)
+## Run Locally (without Docker)
 
 ## 1) Backend
 
@@ -47,21 +52,26 @@ cd server/api
 cp .env.example .env
 ```
 
-Ajuste variáveis do `.env` se necessário.
-Instale o `uv` pela documentação oficial: https://docs.astral.sh/uv/getting-started/installation/
+Install `uv` from the official docs:
+https://docs.astral.sh/uv/getting-started/installation/
 
-Recomendado: usar `uv` para instalar dependências no `.venv` local (sem conflito global):
+Create local virtual environment and install dependencies:
 
 ```bash
 uv venv .venv
 uv pip install -r requirements.txt
+```
+
+Run migrations and start server with SQLite:
+
+```bash
 USE_SQLITE=true uv run python manage.py migrate
 USE_SQLITE=true uv run python manage.py runserver 0.0.0.0:8080
 ```
 
 ## 2) Frontend
 
-Em outro terminal:
+In another terminal:
 
 ```bash
 cd frontend
@@ -70,32 +80,32 @@ npm install
 npm run serve
 ```
 
-Acesse:
+Open:
 
-- Frontend: `http://localhost:8000` (ou `8001` se 8000 estiver ocupado)
+- Frontend: `http://localhost:8000` (or another available port)
 - API: `http://localhost:8080`
 - Swagger: `http://localhost:8080/swagger/`
 
-## Como rodar com Docker
+## Run with Docker
 
-1. Copie os arquivos de ambiente:
+1. Copy environment files:
 
 ```bash
 cp server/api/.env.example server/api/.env
 cp frontend/.env.example frontend/.env
 ```
 
-2. Para Docker, use `DB_HOST=db` em `server/api/.env`.
+2. For Docker networking, set `DB_HOST=db` in `server/api/.env`.
 
-3. Suba tudo:
+3. Start containers:
 
 ```bash
 docker compose up --build
 ```
 
-## Testes
+## Tests
 
-### Backend (todos os testes)
+### Backend (all tests)
 
 ```bash
 cd server/api
@@ -110,25 +120,25 @@ npm run lint
 npm run build
 ```
 
-## Captura de screenshots (shell completo da página)
+## Capture Screenshots
 
-Com backend e frontend rodando:
+With backend and frontend running:
 
 ```bash
 cd frontend
 npm run capture:screenshots -- --base-url=http://localhost:8000 --api-url=http://localhost:8080
 ```
 
-As imagens são salvas em `docs/screenshots/` e incluem `header + conteúdo + footer` com margem externa.
+Generated files are saved in `docs/screenshots/` and capture the app shell (`header + content + footer`) with external margin.
 
 ## CI (GitHub Actions)
 
-Arquivo: `.github/workflows/django-server.yml`
+Workflow file: `.github/workflows/django-server.yml`
 
-- Job frontend: install + lint + build
-- Job backend: install + `uv run python manage.py test`
+- Frontend job: `npm ci`, `npm run lint`, `npm run build`
+- Backend job: install with `uv` and run `USE_SQLITE=true uv run python manage.py test`
 
-## Referências visuais utilizadas
+## Visual References Used
 
 - https://dribbble.com/search/roulette
 - https://www.shutterstock.com/pt/search/roulette-table-layout?dd_referrer=https%3A%2F%2Fwww.google.com%2F

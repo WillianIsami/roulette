@@ -1,19 +1,19 @@
 # Backend (Django API)
 
-API da Roulette Royale com:
+Roulette Royale backend API with:
 
-- autenticação JWT por cookie
-- motor de validação de apostas
-- carteira e transações
-- endpoints de roleta, saldo e histórico
+- JWT cookie authentication
+- Roulette bet validation engine
+- Wallet and transaction management
+- Roulette, balance, and transaction history endpoints
 
-## Pré-requisitos
+## Prerequisites
 
 - Python 3.10+
-- `uv` (recomendado)
-- Instalação do `uv` (docs oficiais): https://docs.astral.sh/uv/getting-started/installation/
+- `uv` (recommended)
+- Official install docs: https://docs.astral.sh/uv/getting-started/installation/
 
-## Configuração
+## Setup
 
 ```bash
 cd api
@@ -22,14 +22,14 @@ uv venv .venv
 uv pip install -r requirements.txt
 ```
 
-## Rodar com SQLite (dev/test)
+## Run with SQLite (dev/test)
 
 ```bash
 USE_SQLITE=true uv run python manage.py migrate
 USE_SQLITE=true uv run python manage.py runserver 0.0.0.0:8080
 ```
 
-## Endpoints principais
+## Main Endpoints
 
 - `POST /api/create/`
 - `POST /api/token/`
@@ -42,7 +42,7 @@ USE_SQLITE=true uv run python manage.py runserver 0.0.0.0:8080
 - `GET /api/transactions/`
 - `GET /swagger/`
 
-## Testes
+## Tests
 
 ```bash
 USE_SQLITE=true uv run python manage.py test
