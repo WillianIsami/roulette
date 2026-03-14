@@ -1,87 +1,124 @@
 <template>
-  <nav
-      class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between me-3 py-3 mb-4 border-bottom"
-  >
-    <RouterLink
-      to="/"
-      class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none"
-    >
-      <img src="../assets/icons/logo.png" alt="roulette logo" width="40" />
+  <header class="glass-card nav-shell px-3 px-md-4 py-3">
+    <RouterLink to="/" class="brand d-flex align-items-center text-decoration-none">
+      <img src="@/assets/branding/brand-mark.svg" alt="Roulette Royale" class="brand-logo" />
+      <div>
+        <p class="brand-title mb-0">Roulette Royale</p>
+        <small class="brand-sub">Mesa moderna com carteira virtual</small>
+      </div>
     </RouterLink>
-    <div
-      class="nav col-12 col-md-auto mb-2 d-flex justify-content-center align-items-center mb-md-0"
-    >
-      <RouterLink
-        to="/"
-        class="nav-link px-2 underline-on-hover"
-        :class="{
-          'link-secondary': activeLink === '/',
-          'link-dark': activeLink !== '/',
-        }"
-        @click="setActiveLink('/')"
-        >Home</RouterLink
-      >
-      <RouterLink
-        to="/about"
-        class="nav-link px-2 underline-on-hover"
-        :class="{
-          'link-secondary': activeLink === '/about',
-          'link-dark': activeLink !== '/about',
-        }"
-        @click="setActiveLink('/about')"
-        >About Us</RouterLink
-      >
-      <RouterLink
-        to="/bets"
-        class="nav-link px-2 underline-on-hover"
-        :class="{
-          'link-secondary': activeLink === '/bets',
-          'link-dark': activeLink !== '/bets',
-        }"
-        @click="setActiveLink('/bets')"
-        >Bets</RouterLink
-      >
-      <RouterLink
-        to="/faq"
-        class="nav-link px-2 underline-on-hover"
-        :class="{
-          'link-secondary': activeLink === '/faq',
-          'link-dark': activeLink !== '/faq',
-        }"
-        @click="setActiveLink('/faq')"
-        >FAQ</RouterLink
-      >
+
+    <nav class="nav-links d-flex align-items-center justify-content-center">
+      <RouterLink to="/" class="link-item" :class="{ active: $route.path === '/' }">Home</RouterLink>
+      <RouterLink to="/about" class="link-item" :class="{ active: $route.path === '/about' }">Sobre</RouterLink>
+      <RouterLink to="/bets" class="link-item" :class="{ active: $route.path === '/bets' }">Apostas</RouterLink>
+      <RouterLink to="/faq" class="link-item" :class="{ active: $route.path === '/faq' }">Como jogar</RouterLink>
+    </nav>
+
+    <div class="nav-actions d-flex align-items-center justify-content-end gap-2">
+      <template v-if="isAuthenticated">
+        <button class="btn btn-brand-outline" type="button" @click="logout">Sair</button>
+      </template>
+      <template v-else>
+        <RouterLink to="/login" class="btn btn-brand-outline">Login</RouterLink>
+        <RouterLink to="/register" class="btn btn-brand">Cadastrar</RouterLink>
+      </template>
     </div>
-    <div class="col-md-3 text-end">
-      <RouterLink
-        to="/login"
-        class="btn btn-outline-success me-2"
-        @click="setActiveLink('/login')"
-        >Login</RouterLink
-      >
-      <RouterLink
-        to="/register"
-        class="btn btn-success"
-        @click="setActiveLink('/register')"
-        >Sign-up</RouterLink
-      >
-    </div>
-  </nav>    
+  </header>
 </template>
 
 <script>
-  export default {
-    name: "NavbarComponent",
-
-    data() {
-      return {
-        activeLink: "/",
-      };
+export default {
+  name: "NavbarComponent",
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
     },
-    methods: {
-      setActiveLink(link) {
-        this.activeLink = link;
-      },
+  },
+  methods: {
+    async logout() {
+      try {
+        await this.$store.dispatch("logout");
+      } finally {
+        this.$router.push("/login");
+      }
     },
-  }
+  },
+};
 </script>
+
+<style scoped>
+.nav-shell {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.brand {
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 52px;
+  height: 52px;
+}
+
+.brand-title {
+  font-family: "Racing Sans One", sans-serif;
+  font-size: 1.2rem;
+  color: #153c2a;
+  line-height: 1.1;
+}
+
+.brand-sub {
+  color: #4d6658;
+  font-size: 0.76rem;
+}
+
+.nav-links {
+  gap: 0.25rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  border: 1px solid #d7c6a2;
+  background: #f5ebd4;
+  justify-self: center;
+}
+
+.link-item {
+  color: #335341;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+}
+
+.link-item:hover {
+  color: #19392b;
+}
+
+.link-item.active {
+  color: #0f2a1f;
+  background: #e8d9b7;
+  border: 1px solid #c89a3b;
+}
+
+@media (max-width: 980px) {
+  .nav-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .brand,
+  .nav-actions {
+    justify-content: center;
+  }
+
+  .nav-links {
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+}
+</style>

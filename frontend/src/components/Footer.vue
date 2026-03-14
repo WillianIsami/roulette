@@ -1,30 +1,17 @@
 <template>
-  <footer
-    class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top"
-  >
-    <div class="col-md-4 d-flex align-items-center">
-      <img src="../assets/icons/logo.png" width="40" height="40" />
-      <span class="ms-3 text-muted">© 2024 Company, Inc</span>
+  <footer class="footer-shell d-flex flex-wrap align-items-center justify-content-between gap-3 px-3 px-md-4 py-3">
+    <div class="d-flex align-items-center gap-2">
+      <img src="@/assets/branding/brand-mark.svg" alt="brand" class="footer-logo" />
+      <div>
+        <p class="mb-0 footer-title">Roulette Royale</p>
+        <small class="footer-copy">© {{ currentYear }} - Plataforma de simulação educacional</small>
+      </div>
     </div>
 
-    <div class="d-flex justify-content-end">
-      <ul class="nav col-md-4 justify-content-end list-unstyled d-flex w-100">
-        <li class="ms-3">
-          <a class="text-muted" href="#"
-            ><img src="../assets/icons/instagram.png" width="24" height="24"
-          /></a>
-        </li>
-        <li class="ms-3">
-          <a class="text-muted" href="#"
-            ><img src="../assets/icons/twitter.png" width="24" height="24"
-          /></a>
-        </li>
-        <li class="ms-3">
-          <a class="text-muted" href="#"
-            ><img src="../assets/icons/youtube.png" width="24" height="24"
-          /></a>
-        </li>
-      </ul>
+    <div class="d-flex gap-2 align-items-center">
+      <span class="pill-label">Vue 3</span>
+      <span class="pill-label">Django API</span>
+      <span class="pill-label">Wallet Coins</span>
     </div>
   </footer>
 </template>
@@ -32,5 +19,33 @@
 <script>
 export default {
   name: "FooterComponent",
+  computed: {
+    currentYear() {
+      return new Date().getFullYear();
+    },
+  },
 };
 </script>
+
+<style scoped>
+.footer-shell {
+  border-radius: 18px 18px 0 0;
+  border: 1px solid rgba(178, 136, 35, 0.24);
+  border-bottom: none;
+  background: rgba(255, 248, 230, 0.88);
+}
+
+.footer-logo {
+  width: 34px;
+  height: 34px;
+}
+
+.footer-title {
+  font-weight: 700;
+  color: #224532;
+}
+
+.footer-copy {
+  color: #4f6558;
+}
+</style>

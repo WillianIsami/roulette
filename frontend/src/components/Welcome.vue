@@ -1,23 +1,40 @@
 <template>
-  <div class="m-4 text-success">
-    <h1>ROULETTE</h1>
-  </div>
+  <section class="welcome glass-card p-4 p-md-5">
+    <div class="welcome-content">
+      <p class="pill-label mb-3">Nova identidade visual</p>
+      <h1 class="page-title">Roulette com carteira virtual e fluxo real de aposta</h1>
+      <p class="page-lead mb-0">
+        Monte sua estratégia, escolha fichas, faça depósito de moedas e acompanhe cada resultado da roleta com histórico de transações em tempo real.
+      </p>
+    </div>
+    <img src="@/assets/branding/brand-banner.svg" alt="Roulette Royale" class="welcome-art" />
+  </section>
 </template>
 
 <script>
 export default {
-  name: "RouletteComponent",
+  name: "WelcomeComponent",
 };
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+.welcome {
+  display: grid;
+  gap: 1.4rem;
+  align-items: center;
+  grid-template-columns: 1.15fr 1fr;
+}
 
-h1 {
-  font-family: Inter;
-  font-size: 2rem;
-  font-style: normal;
-  font-weight: 900;
-  line-height: normal;
+.welcome-art {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(232, 191, 101, 0.45);
+  box-shadow: 0 14px 30px rgba(10, 42, 28, 0.25);
+}
+
+@media (max-width: 980px) {
+  .welcome {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

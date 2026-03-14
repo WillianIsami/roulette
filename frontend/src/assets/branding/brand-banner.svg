@@ -1,0 +1,53 @@
+<svg width="1400" height="700" viewBox="0 0 1400 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1400" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#092A1B"/>
+      <stop offset="1" stop-color="#1A4B33"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="270" y1="90" x2="1180" y2="610" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F7DE9E"/>
+      <stop offset="1" stop-color="#B27C1A"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(450 360) rotate(90) scale(230)">
+      <stop stop-color="#2EC37A"/>
+      <stop offset="1" stop-color="#1A6A42"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1400" height="700" rx="38" fill="url(#bg)"/>
+  <rect x="30" y="30" width="1340" height="640" rx="30" stroke="url(#gold)" stroke-width="6"/>
+
+  <g opacity="0.4">
+    <circle cx="1320" cy="90" r="70" fill="#E9C168"/>
+    <circle cx="1220" cy="620" r="90" fill="#1F6C47"/>
+  </g>
+
+  <g transform="translate(450 360)">
+    <circle r="220" fill="#112D22"/>
+    <circle r="206" fill="url(#glow)"/>
+    <circle r="195" stroke="#D9AE50" stroke-width="8"/>
+    <circle r="168" fill="#11422D"/>
+
+    <g fill="#F4D38F" font-family="'Trebuchet MS', sans-serif" font-size="28" font-weight="700" text-anchor="middle">
+      <text x="0" y="-126">0</text>
+      <text x="95" y="-90">32</text>
+      <text x="136" y="-13">15</text>
+      <text x="108" y="83">19</text>
+      <text x="34" y="132">4</text>
+      <text x="-52" y="129">21</text>
+      <text x="-118" y="67">2</text>
+      <text x="-141" y="-18">25</text>
+      <text x="-102" y="-99">17</text>
+    </g>
+
+    <circle r="58" fill="#ECC87B"/>
+    <circle r="22" fill="#A36D15"/>
+    <path d="M0 -232L20 -194H-20L0 -232Z" fill="#E34E32"/>
+  </g>
+
+  <g fill="#F5E7C5" font-family="'Trebuchet MS', sans-serif">
+    <text x="760" y="270" font-size="74" font-weight="700">Roulette Royale</text>
+    <text x="760" y="340" font-size="30" opacity="0.9">Apostas com carteira virtual, roleta real e UX otimizada</text>
+    <text x="760" y="410" font-size="24" opacity="0.85">Backend Django + Frontend Vue.js</text>
+  </g>
+</svg>

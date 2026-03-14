@@ -1,0 +1,37 @@
+<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="felt" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(110 110) rotate(90) scale(110)">
+      <stop stop-color="#2FAE67"/>
+      <stop offset="1" stop-color="#12613A"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="20" y1="20" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F6D989"/>
+      <stop offset="1" stop-color="#B88423"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="110" cy="110" r="104" fill="#173328"/>
+  <circle cx="110" cy="110" r="96" fill="url(#felt)"/>
+  <circle cx="110" cy="110" r="89" stroke="url(#gold)" stroke-width="6"/>
+
+  <g transform="translate(110 110)">
+    <circle r="62" fill="#102D24"/>
+    <circle r="56" fill="#1D5943"/>
+    <circle r="48" stroke="#E8BF65" stroke-width="4"/>
+
+    <g fill="#F5E2B7" font-family="'Trebuchet MS', sans-serif" font-size="12" font-weight="700" text-anchor="middle">
+      <text x="0" y="-37">0</text>
+      <text x="32" y="-20">32</text>
+      <text x="37" y="15">15</text>
+      <text x="19" y="37">19</text>
+      <text x="-16" y="38">4</text>
+      <text x="-36" y="17">21</text>
+      <text x="-31" y="-18">2</text>
+    </g>
+
+    <circle r="16" fill="#F0D08E"/>
+    <circle r="6" fill="#A8741C"/>
+  </g>
+
+  <path d="M110 18L118 33H102L110 18Z" fill="#E34E32"/>
+</svg>

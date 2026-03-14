@@ -1,46 +1,47 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
+
 import AboutView from "@/views/AboutView.vue";
 import BetsView from "@/views/BetsView.vue";
 import FaqView from "@/views/FaqView.vue";
+import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import store from "@/store";
 
 const routes = [
-  { 
-    path: "/", 
+  {
+    path: "/",
     name: "Home",
     component: HomeView,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
   },
-  { 
-    path: "/about", 
+  {
+    path: "/about",
     name: "About",
     component: AboutView,
   },
-  { 
-    path: "/bets", 
+  {
+    path: "/bets",
     name: "Bets",
     component: BetsView,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
   },
-  { 
-    path: "/faq", 
+  {
+    path: "/faq",
     name: "Faq",
     component: FaqView,
   },
-  { 
-    path: "/login", 
+  {
+    path: "/login",
     name: "Login",
     component: LoginView,
   },
-  { 
-    path: "/register", 
+  {
+    path: "/register",
     name: "Register",
     component: RegisterView,
   },
@@ -51,17 +52,23 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.getters.isAuthenticated  
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!isAuthenticated) {
-      next({ name: 'Login' });
-    } else {
-      next();
-    }
-  } else {
-    next();
+router.beforeEach(async (to, from, next) => {
+  if (!store.getters.authChecked) {
+    await store.dispatch("checkAuth");
   }
+
+  const isAuthenticated = store.getters.isAuthenticated;
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
+    next({ name: "Login" });
+    return;
+  }
+
+  if ((to.name === "Login" || to.name === "Register") && isAuthenticated) {
+    next({ name: "Home" });
+    return;
+  }
+
+  next();
 });
 
 export default router;
