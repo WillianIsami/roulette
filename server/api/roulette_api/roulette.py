@@ -52,16 +52,27 @@ class InvalidBet(Exception):
     pass
 
 
+def validate_number_range(numbers):
+    if not all(0 <= number <= 36 for number in numbers):
+        raise InvalidBet
+
+
 @dataclass
 class BetFactory:
 
     def create_from_str(self, value: float, raw_str):
         numbers = set(map(int, raw_str.split(',')))
+        validate_number_range(numbers)
+        if not (1 <= len(numbers) <= 2):
+            raise InvalidBet
+        if len(numbers) == 2 and 0 in numbers:
+            # Zero is only valid in dedicated zero bet combinations.
+            raise InvalidBet
         positions = list(map(number_to_xy, numbers))
         total_distance = distance_2d(max(positions), min(positions))
         if total_distance > 1:
             raise InvalidBet
-        return Bet(value=0, numbers=numbers)
+        return Bet(value=value, numbers=numbers)
 
 
 @dataclass
@@ -130,6 +141,7 @@ class Bet:
 
     @classmethod
     def create_street(cls, value, lst):
+        validate_number_range(lst)
         street_verify(lst)
         return cls(
             value,
@@ -138,6 +150,7 @@ class Bet:
     
     @classmethod
     def create_two_street(cls, value, lst):
+        validate_number_range(lst)
         lst.sort()
         max_value, min_value =  max(lst), \
                                 min(lst)
@@ -153,8 +166,9 @@ class Bet:
 
     @classmethod
     def create_corner(cls, value, lst):
-        max_value, min_value = max(lst), min(lst)
+        validate_number_range(lst)
         lst = sorted(list(set(lst)))
+        max_value, min_value = max(lst), min(lst)
         copy_lst = list(map(lambda it: it%3, lst))
         if len(copy_lst) != 4:
             raise InvalidBet
@@ -174,10 +188,11 @@ class Bet:
     
     @classmethod
     def create_zero_bets(cls, value, lst):
+        validate_number_range(lst)
         bet_numbers = [[0, 1, 2, 3],[0, 1],[0, 1, 2],[0, 2],[0, 2, 3],[0, 3]]
         if lst in bet_numbers:
             return cls(
                 value,
                 set(lst)
             )
-        return InvalidBet
+        raise InvalidBet
